@@ -8,7 +8,10 @@ namespace Domino.Infraestructure.Repositories
 {
      public class ClassificationRepository : GenericRepository<Classification>, IClassificationRepository
     {
-        public ClassificationRepository(ApplicationDbContext context) : base(context) { }
+        public ClassificationRepository(ApplicationDbContext context) 
+            : base(context) 
+        {
+        }
 
         public async Task<List<Classification>> GetByTournamentAsync(int tournamentId)
         {
