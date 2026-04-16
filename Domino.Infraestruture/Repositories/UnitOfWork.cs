@@ -53,14 +53,18 @@ namespace Domino.Infraestructure.Repositories
         public async Task BeginTransactionAsync()
         {
             if (_transaction is not null)
+            {
                 throw new InvalidOperationException("Ya hay una transacción activa.");
+            }
             _transaction = await _context.Database.BeginTransactionAsync();
         }
 
         public async Task CommitAsync()
         {
             if (_transaction is null)
+            {
                 throw new InvalidOperationException("No hay transacción activa para confirmar.");
+            }
             await _context.SaveChangesAsync();
             await _transaction.CommitAsync();
             await _transaction.DisposeAsync();
@@ -78,7 +82,9 @@ namespace Domino.Infraestructure.Repositories
         public async ValueTask DisposeAsync()
         {
             if (_transaction is not null)
+            {
                 await _transaction.DisposeAsync();
+            }
             await _context.DisposeAsync();
         }
 }
