@@ -1,10 +1,5 @@
 ﻿using Domino.Application.DTOs.TournamentDTOs;
 using Domino.Application.Responses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Domino.Domain.Entities.Enums;
 
 namespace Domino.Application.Contract

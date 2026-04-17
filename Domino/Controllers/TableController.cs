@@ -1,6 +1,5 @@
 ﻿using Domino.Application.Contract;
 using Domino.Application.DTOs.TableDTOs;
-using Domino.Application.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Domino.API.Controllers

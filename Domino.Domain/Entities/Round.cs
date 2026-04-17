@@ -1,12 +1,6 @@
 ﻿using Domino.Domain.Core;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Domino.Domain.Entities.Enums;
-using static Domino.Domain.Entities.Table;
 
 namespace Domino.Domain.Entities
 {

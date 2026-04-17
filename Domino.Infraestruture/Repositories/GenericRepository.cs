@@ -1,13 +1,7 @@
 ﻿using Domino.Domain.Core;
-using Domino.Infraestructure.Contracs;
 using Domino.Infraestructure.Contracts;
 using Domino.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domino.Infraestructure.Repositories
 {

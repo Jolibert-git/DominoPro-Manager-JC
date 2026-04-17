@@ -1,6 +1,5 @@
 ﻿using Domino.Application.Contract;
 using Domino.Application.DTOs.TournamentDTOs;
-using Domino.Application.Responses;
 using Microsoft.AspNetCore.Mvc;
 using static Domino.Domain.Entities.Enums;
 

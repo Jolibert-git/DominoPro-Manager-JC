@@ -1,10 +1,5 @@
 ﻿using Domino.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domino.Persistence.Context
 {
@@ -32,51 +27,51 @@ namespace Domino.Persistence.Context
         {
             base.OnModelCreating(modelBuilder);
 
-            
+
             //  Player
             modelBuilder.Entity<Player>(entity =>
             {
-                entity.HasKey(p => p.Id);
+                //entity.HasKey(p => p.Id);
 
-                entity.Property(p => p.Name)
-                      .IsRequired()
-                      .HasMaxLength(50);
+                //entity.Property(p => p.Name)
+                //      .IsRequired()
+                //      .HasMaxLength(50);
 
-                entity.Property(p => p.LastName)
-                      .IsRequired()
-                      .HasMaxLength(50);
+                //entity.Property(p => p.LastName)
+                //      .IsRequired()
+                //      .HasMaxLength(50);
 
-                entity.Property(p => p.Email)
-                      .HasMaxLength(100);
+                //entity.Property(p => p.Email)
+                //      .HasMaxLength(100);
 
-                entity.Property(p => p.Phone)
-                      .HasMaxLength(20);
+                //entity.Property(p => p.Phone)
+                //      .HasMaxLength(20);
 
                 entity.HasIndex(p => p.Email)
-                      .IsUnique()
-                      .HasFilter("[Email] IS NOT NULL AND [Email] != ''");
+                  .IsUnique()
+                  .HasFilter("[Email] IS NOT NULL AND [Email] != ''");
 
-                entity.Ignore(p => p.WinRate);
-            });
+            //entity.Ignore(p => p.WinRate);
+        });
 
-            
+
             //Tournament
             modelBuilder.Entity<Tournament>(entity =>
             {
-                entity.HasKey(t => t.Id);
+                //entity.HasKey(t => t.Id);
 
-                entity.Property(t => t.Name)
-                      .IsRequired()
-                      .HasMaxLength(50);
+                //entity.Property(t => t.Name)
+                //      .IsRequired()
+                //      .HasMaxLength(50);
 
-                entity.Property(t => t.Description)
-                      .HasMaxLength(500);
+                //entity.Property(t => t.Description)
+                //      .HasMaxLength(500);
 
-                entity.Property(t => t.Place)
-                      .HasMaxLength(100);
+                //entity.Property(t => t.Place)
+                //      .HasMaxLength(100);
 
-                entity.Property(t => t.Prize)
-                      .HasMaxLength(200);
+                //entity.Property(t => t.Prize)
+                //      .HasMaxLength(200);
 
                 entity.Property(t => t.Mode)
                       .HasConversion<string>();
@@ -84,15 +79,15 @@ namespace Domino.Persistence.Context
                 entity.Property(t => t.Status)
                       .HasConversion<string>();
 
-                entity.Ignore(t => t.TotalRegistered);
-                entity.Ignore(t => t.IsFull);
+                //entity.Ignore(t => t.TotalRegistered);
+                //entity.Ignore(t => t.IsFull);
             });
 
             
             //TournamentRegistration
             modelBuilder.Entity<TournamentRegistration>(entity =>
             {
-                entity.HasKey(r => r.Id);
+                //entity.HasKey(r => r.Id);
 
                 entity.Property(r => r.Status)
                       .HasConversion<string>();
@@ -114,14 +109,14 @@ namespace Domino.Persistence.Context
             //  Round
             modelBuilder.Entity<Round>(entity =>
             {
-                entity.HasKey(r => r.Id);
+                //entity.HasKey(r => r.Id);
 
                 entity.Property(r => r.Status)
                       .HasConversion<string>();
 
-                entity.Ignore(r => r.Duration);
-                entity.Ignore(r => r.TotalTable);
-                entity.Ignore(r => r.CompleteTable);
+                //entity.Ignore(r => r.Duration);
+                //entity.Ignore(r => r.TotalTable);
+                //entity.Ignore(r => r.CompleteTable);
 
                 entity.HasOne(r => r.Tournament)
                       .WithMany(t => t.Rondas)
@@ -132,14 +127,14 @@ namespace Domino.Persistence.Context
             //Table
             modelBuilder.Entity<Table>(entity =>
             {
-                entity.HasKey(t => t.Id);
+                //entity.HasKey(t => t.Id);
 
                 entity.Property(t => t.Status)
                       .HasConversion<string>();
 
-                entity.Ignore(t => t.Duration);
-                entity.Ignore(t => t.IsComplete);
-                entity.Ignore(t => t.Winner);
+                //entity.Ignore(t => t.Duration);
+                //entity.Ignore(t => t.IsComplete);
+                //entity.Ignore(t => t.Winner);
 
                 entity.HasOne(t => t.Round)
                       .WithMany(r => r.Tables)
@@ -149,7 +144,7 @@ namespace Domino.Persistence.Context
 
             modelBuilder.Entity<Result>(entity =>
             {
-                entity.HasKey(r => r.Id);
+                //entity.HasKey(r => r.Id);
 
                 entity.HasOne(r => r.Player)
                       .WithMany(p => p.Results)       
@@ -171,14 +166,14 @@ namespace Domino.Persistence.Context
             //Classification
             modelBuilder.Entity<Classification>(entity =>
             {
-                entity.HasKey(c => c.Id);
+                //entity.HasKey(c => c.Id);
 
                 entity.HasIndex(c => new { c.PlayerId, c.TournamentId })
                       .IsUnique();
 
-                entity.Ignore(c => c.TotalGame);
-                entity.Ignore(c => c.WinRate);
-                entity.Ignore(c => c.PointsDifferent);
+                //entity.Ignore(c => c.TotalGame);
+                //entity.Ignore(c => c.WinRate);
+                //entity.Ignore(c => c.PointsDifferent);
 
                 entity.HasOne(c => c.Player)
                       .WithMany(p => p.Classifications)

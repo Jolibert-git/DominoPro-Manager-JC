@@ -7,7 +7,6 @@ using Domino.Application.DTOs.TableDTOs;
 using Domino.Application.DTOs.TournamentDTOs;
 using Domino.Application.DTOs.TournamentRegistrationDTOs;
 using Domino.Domain.Entities;
-using static Domino.Domain.Entities.Enums;
 
 namespace Domino.Application.Maping
 {

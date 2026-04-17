@@ -44,31 +44,6 @@ namespace Domino.Infraestructure.Repositories
                                .FirstOrDefaultAsync(r => r.TableId == tableId && r.IsWinner);
         }
 
-        //    public async Task<List<Result>> GetByTableAsync(int tableId /*,CancellationToken ct = default*/)
-        //        => await _dbSet.AsNoTracking()
-        //                       .Include(r => r.Player)
-        //                       .Include(r => r.Playmate)
-        //                       .Where(r => r.TableId == tableId)
-        //                       .ToListAsync(/*ct*/);
-
-        //    public async Task<List<Result>> GetByPlayerAsync(int playerId /*,CancellationToken ct = default*/)
-        //        => await _dbSet.AsNoTracking()
-        //                       .Include(r => r.Table)
-        //                       .Where(r => r.PlayerId == playerId || r.PlaymateId == playerId)
-        //                       .OrderByDescending(r => r.Id) 
-        //                       .ToListAsync(/*ct*/);
-
-        //    public async Task<List<Result>> GetByPlayerAndTournamentAsync(int playerId, int tournamentId /*,CancellationToken ct = default*/)
-        //        => await _dbSet.AsNoTracking()
-        //                       .Include(r => r.Table)
-        //                           .ThenInclude(m => m.Round)
-        //                       .Where(r => (r.PlayerId == playerId || r.PlaymateId == playerId) &&
-        //                                    r.Table.Round.TournamentId == tournamentId)
-        //                       .ToListAsync(/*ct*/);
-
-        //    public async Task<Result?> GetWinnerOfTableAsync(int tableId /*,CancellationToken ct = default*/)
-        //        => await _dbSet.AsNoTracking()
-        //                       .Include(r => r.Player)
-        //                       .FirstOrDefaultAsync(r => r.TableId == tableId && r.IsWinner /*,ct*/);
+        
     }
 }

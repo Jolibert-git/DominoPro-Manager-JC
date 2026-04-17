@@ -1,15 +1,9 @@
 ﻿using AutoMapper;
 using Domino.Application.Contract;
 using Domino.Application.DTOs.ClassificationDTOs;
-using Domino.Application.DTOs.PlayerDTOs;
 using Domino.Application.Responses;
 using Domino.Domain.Entities;
 using Domino.Infraestructure.Contracs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domino.Application.Services
 {

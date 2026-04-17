@@ -4,7 +4,6 @@ using Domino.Application.Services;
 using Domino.Infraestructure.Contracs;
 using Domino.Infraestructure.Repositories;
 using Domino.Persistence.Context;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 
 namespace Domino
@@ -23,10 +22,19 @@ namespace Domino
 
             builder.Services.AddAutoMapper(cfg => { }, AppDomain.CurrentDomain.GetAssemblies());
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
              options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
-             b => b.MigrationsAssembly("Domino.Persistence")
+             b => b.MigrationsAssembly("Domino.Persistences")
              ));
 
 
@@ -58,6 +66,7 @@ namespace Domino
                 app.UseSwaggerUI();
             }
 
+            app.UseCors("AllowAll");
 
             app.MapControllers();
 
