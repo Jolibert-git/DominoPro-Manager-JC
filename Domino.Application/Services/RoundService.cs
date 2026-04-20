@@ -20,14 +20,14 @@ namespace Domino.Application.Services
         }
 
 
-        public async Task<ApiResponse<List<RoundDTO>>> GetByTournamentAsync(int tournamentId)
+        public async Task<ApiResponse<List<RoundDTO>>> GetByTournamentAsync(int Id)
         {
-            if (!await _work.Tournaments.ExistsAsync(tournamentId))
+            if (!await _work.Tournaments.ExistsAsync(Id))
             {
                 return ApiResponse<List<RoundDTO>>.ErrorResponse($"Tournament with ID was not found", 404);
             }
 
-            var rounds = await _work.Rounds.GetByTournamentAsync(tournamentId);
+            var rounds = await _work.Rounds.GetByTournamentAsync(Id);
 
             return ApiResponse<List<RoundDTO>>.SuccessResponse(_mapper.Map<List<RoundDTO>>(rounds));
         }
@@ -68,9 +68,9 @@ namespace Domino.Application.Services
             return ApiResponse<RoundDTO>.SuccessResponse(_mapper.Map<RoundDTO>(round));
         }
 
-        public async Task<ApiResponse<RoundDTO>> CreateAsync(CreateRoundDTO request)
+        public async Task<ApiResponse<RoundDTO>> CreateAsync(CreateRoundDTO createRoundDto)
         {
-            var tournament = await _work.Tournaments.GetByIdAsync(request.TournamentId);
+            var tournament = await _work.Tournaments.GetByIdAsync(createRoundDto.TournamentId);
 
             if (tournament is null)
             {
@@ -82,19 +82,19 @@ namespace Domino.Application.Services
                 return ApiResponse<RoundDTO>.ErrorResponse("Rounds can only be created for tournaments that are 'InCourse'", 409);
             }
 
-            var activeRound = await _work.Rounds.GetCurrentAsync(request.TournamentId);
+            var activeRound = await _work.Rounds.GetCurrentAsync(createRoundDto.TournamentId);
 
             if (activeRound is not null)
             {
                 return ApiResponse<RoundDTO>.ErrorResponse($"Round {activeRound.RoundNumber} is still in progress. Complete it before creating a new one", 409);
             }
 
-            if (tournament.MaxRound.HasValue && request.RoundNumber > tournament.MaxRound.Value)
+            if (tournament.MaxRound.HasValue && createRoundDto.RoundNumber > tournament.MaxRound.Value)
             {
                 return ApiResponse<RoundDTO>.ErrorResponse($"Round number exceeds the maximum allowed ", 400);
             }
 
-            var round = _mapper.Map<Round>(request);
+            var round = _mapper.Map<Round>(createRoundDto);
 
             await _work.Rounds.AddAsync(round);
             await _work.CompleteAsync();
@@ -102,7 +102,7 @@ namespace Domino.Application.Services
             return ApiResponse<RoundDTO>.CreatedResponse(_mapper.Map<RoundDTO>(round));
         }
 
-        public async Task<ApiResponse<RoundDTO>> UpdateStatusAsync(int id, UpdateRoundStatusDTO request)
+        public async Task<ApiResponse<RoundDTO>> UpdateStatusAsync(int id, UpdateRoundStatusDTO roundStatusDto)
         {
             var round = await _work.Rounds.GetByIdAsync(id);
 
@@ -111,7 +111,7 @@ namespace Domino.Application.Services
                 return ApiResponse<RoundDTO>.ErrorResponse($"Round with ID was not found", 404);
             }
 
-            bool validTransition = (round.Status, request.Status) switch
+            bool validTransition = (round.Status, roundStatusDto.Status) switch
             {
                 (RoundStatus.Pending, RoundStatus.InPlay) => true,
                 (RoundStatus.InPlay, RoundStatus.Completed) => true,
@@ -123,7 +123,7 @@ namespace Domino.Application.Services
                 return ApiResponse<RoundDTO>.ErrorResponse($"Cannot transition", 409);
             }
 
-            if (request.Status == RoundStatus.Completed)
+            if (roundStatusDto.Status == RoundStatus.Completed)
             {
                 var roundWithTables = await _work.Rounds.GetWithTablesAsync(id);
 
@@ -133,16 +133,16 @@ namespace Domino.Application.Services
                 }
             }
 
-            round.Status = request.Status;
+            round.Status = roundStatusDto.Status;
 
-            if (request.Status == RoundStatus.InPlay && round.StartDate is null)
+            if (roundStatusDto.Status == RoundStatus.InPlay && round.StartDate is null)
             {
                 round.StartDate = DateTime.UtcNow;
             }
 
-            if (request.Status == RoundStatus.Completed)
+            if (roundStatusDto.Status == RoundStatus.Completed)
             {
-                round.EndDate = request.EndDate ?? DateTime.UtcNow;
+                round.EndDate = roundStatusDto.EndDate ?? DateTime.UtcNow;
             }
 
             _work.Rounds.Update(round);

@@ -70,6 +70,7 @@ namespace Domino.API.Controllers
             {
                 return BadRequest(ModelState);
             }
+
             var response = await _service.CreateAsync(request );
             return StatusCode(response.StatusCode, response);
         }

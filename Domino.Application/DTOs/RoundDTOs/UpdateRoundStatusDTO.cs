@@ -7,7 +7,7 @@ namespace Domino.Application.DTOs.RoundDTOs
     public class UpdateRoundStatusDTO
     {
         [Required]
-        [EnumDataType(typeof(RoundStatus))]
+        [EnumDataType(typeof(RoundStatus), ErrorMessage = "Status not validated")]
         public RoundStatus Status { get; set; }
 
         public DateTime? EndDate { get; set; }

@@ -19,31 +19,32 @@ namespace Domino.Application.Services
         }
 
 
-        public async Task<ApiResponse<List<ClassificationDTO>>> GetByTournamentAsync(int tournamentId)
+        public async Task<ApiResponse<List<ClassificationDTO>>> GetByTournamentAsync(int Id)
         {
-            if (!await _work.Tournaments.ExistsAsync(tournamentId))
+            if (!await _work.Tournaments.ExistsAsync(Id))
             {
                 return ApiResponse<List<ClassificationDTO>>.ErrorResponse($"Tournament with ID  was not found", 404);
             }
 
-            var list = await _work.Classifications.GetByTournamentAsync(tournamentId);
+            var list = await _work.Classifications.GetByTournamentAsync(Id);
 
             return ApiResponse<List<ClassificationDTO>>.SuccessResponse(_mapper.Map<List<ClassificationDTO>>(list));
         }
 
-        public async Task<ApiResponse<List<ClassificationDTO>>> GetFinalStandingsAsync(int tournamentId)
+        public async Task<ApiResponse<List<ClassificationDTO>>> GetFinalStandingsAsync(int Id)
         {
-            if (!await _work.Tournaments.ExistsAsync(tournamentId))
+            if (!await _work.Tournaments.ExistsAsync(Id))
             {
                 return ApiResponse<List<ClassificationDTO>>.ErrorResponse($"Tournament with ID  was not found", 404);
             }
 
-            var list = await _work.Classifications.GetFinalStandingsAsync(tournamentId);
+            var list = await _work.Classifications.GetFinalStandingsAsync(Id);
 
             if (!list.Any())
             {
                 return ApiResponse<List<ClassificationDTO>>.ErrorResponse("No final standings have been published for this tournament yet", 404);
             }
+
             return ApiResponse<List<ClassificationDTO>>.SuccessResponse(_mapper.Map<List<ClassificationDTO>>(list));
         }
 
@@ -75,30 +76,30 @@ namespace Domino.Application.Services
             return ApiResponse<ClassificationDTO>.SuccessResponse(_mapper.Map<ClassificationDTO>(classification));
         }
 
-        public async Task<ApiResponse<ClassificationDTO>> UpsertAsync(UpdateClassificationDTO request)
+        public async Task<ApiResponse<ClassificationDTO>> UpsertAsync(UpdateClassificationDTO updateClassificationDTO)
         {
-            if (!await _work.Tournaments.ExistsAsync(request.TournamentId))
+            if (!await _work.Tournaments.ExistsAsync(updateClassificationDTO.TournamentId))
             {
                 return ApiResponse<ClassificationDTO>.ErrorResponse($"Tournament with ID  was not found", 404);
             }
 
-            if (!await _work.Players.ExistsAsync(request.PlayerId))
+            if (!await _work.Players.ExistsAsync(updateClassificationDTO.PlayerId))
             {
                 return ApiResponse<ClassificationDTO>.ErrorResponse($"Player with ID  was not found", 404);
             }
 
-            var existing = await _work.Classifications.GetByPlayerAndTournamentAsync(request.PlayerId, request.TournamentId);
+            var existing = await _work.Classifications.GetByPlayerAndTournamentAsync(updateClassificationDTO.PlayerId, updateClassificationDTO.TournamentId);
 
             if (existing is not null)
             {
-                _mapper.Map(request, existing);
+                _mapper.Map(updateClassificationDTO, existing);
 
                 _work.Classifications.Update(existing);
                 await _work.CompleteAsync();
 
                 return ApiResponse<ClassificationDTO>.SuccessResponse(_mapper.Map<ClassificationDTO>(existing));
             }
-            var classification = _mapper.Map<Classification>(request);
+            var classification = _mapper.Map<Classification>(updateClassificationDTO);
 
             await _work.Classifications.AddAsync(classification);
             await _work.CompleteAsync();

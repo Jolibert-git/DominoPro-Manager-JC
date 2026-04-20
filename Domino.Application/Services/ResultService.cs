@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using Domino.Application.Contract;
 using Domino.Application.DTOs.ResultDTOs;
 using Domino.Application.Responses;
@@ -20,30 +21,29 @@ namespace Domino.Application.Services
         }
 
 
-        public async Task<ApiResponse<List<ResultDTO>>> GetByTableAsync(int tableId )
+        public async Task<ApiResponse<List<ResultDTO>>> GetByTableAsync(int Id )
         {
-            if (!await _work.Tables.ExistsAsync(tableId))
+            if (!await _work.Tables.ExistsAsync(Id))
             {
                 return ApiResponse<List<ResultDTO>>.ErrorResponse($"Table with ID  not found", 404);
             }
 
-            var results = await _work.Results.GetByTableAsync(tableId );
+            var results = await _work.Results.GetByTableAsync(Id );
             return ApiResponse<List<ResultDTO>>.SuccessResponse(_mapper.Map<List<ResultDTO>>(results));
         }
 
-        public async Task<ApiResponse<List<ResultDTO>>> GetByPlayerAsync(int playerId )
+        public async Task<ApiResponse<List<ResultDTO>>> GetByPlayerAsync(int Id )
         {
-            if (!await _work.Players.ExistsAsync(playerId))
+            if (!await _work.Players.ExistsAsync(Id))
             {
                 return ApiResponse<List<ResultDTO>>.ErrorResponse($"Player with ID  not found", 404);
             }
 
-            var results = await _work.Results.GetByPlayerAsync(playerId );
+            var results = await _work.Results.GetByPlayerAsync(Id );
             return ApiResponse<List<ResultDTO>>.SuccessResponse(_mapper.Map<List<ResultDTO>>(results));
         }
 
-        public async Task<ApiResponse<List<ResultDTO>>> GetByPlayerAndTournamentAsync(
-            int playerId, int tournamentId )
+        public async Task<ApiResponse<List<ResultDTO>>> GetByPlayerAndTournamentAsync(int playerId, int tournamentId )
         {
             if (!await _work.Players.ExistsAsync(playerId))
             {
@@ -70,14 +70,14 @@ namespace Domino.Application.Services
             return ApiResponse<ResultDTO>.SuccessResponse(_mapper.Map<ResultDTO>(result));
         }
 
-        public async Task<ApiResponse<ResultDTO>> GetWinnerOfTableAsync(int tableId )
+        public async Task<ApiResponse<ResultDTO>> GetWinnerOfTableAsync(int Id )
         {
-            if (!await _work.Tables.ExistsAsync(tableId))
+            if (!await _work.Tables.ExistsAsync(Id))
             {
                 return ApiResponse<ResultDTO>.ErrorResponse($"Table with ID  was not found", 404);
             }
 
-            var result = await _work.Results.GetWinnerOfTableAsync(tableId );
+            var result = await _work.Results.GetWinnerOfTableAsync(Id );
 
             if (result is null)
             {
@@ -87,13 +87,13 @@ namespace Domino.Application.Services
             return ApiResponse<ResultDTO>.SuccessResponse(_mapper.Map<ResultDTO>(result));
         }
 
-        public async Task<ApiResponse<ResultDTO>> CreateAsync(CreateResultDTO request)
+        public async Task<ApiResponse<ResultDTO>> CreateAsync(CreateResultDTO resultDto)
         {
-            var table = await _work.Tables.GetByIdAsync(request.TableId);
+            var table = await _work.Tables.GetByIdAsync(resultDto.TableId);
 
             if (table is null)
             {
-                return ApiResponse<ResultDTO>.ErrorResponse($"Table with ID {request.TableId} was not found", 404);
+                return ApiResponse<ResultDTO>.ErrorResponse($"Table with ID {resultDto.TableId} was not found", 404);
             }
 
             if (table.Status == GameStatus.Completed || table.Status == GameStatus.Cancelled)
@@ -101,29 +101,29 @@ namespace Domino.Application.Services
                 return ApiResponse<ResultDTO>.ErrorResponse("Cannot add results to a completed or cancelled table", 409);
             }
 
-            if (!await _work.Players.ExistsAsync(request.PlayerId))
+            if (!await _work.Players.ExistsAsync(resultDto.PlayerId))
             {
                 return ApiResponse<ResultDTO>.ErrorResponse($"Player with ID  was not found", 404);
             }
 
-            if (request.PlaymateId.HasValue)
+            if (resultDto.PlaymateId.HasValue)
             {
-                if (request.PlaymateId == request.PlayerId)
+                if (resultDto.PlaymateId == resultDto.PlayerId)
                 {
                     return ApiResponse<ResultDTO>.ErrorResponse("A player cannot be their own playmate", 400);
                 }
 
-                if (!await _work.Players.ExistsAsync(request.PlaymateId.Value))
+                if (!await _work.Players.ExistsAsync(resultDto.PlaymateId.Value))
                 {
                     return ApiResponse<ResultDTO>.ErrorResponse($"Playmate with ID  was not found", 404);
                 }
             }
 
-            if (request.IsWinner)
+            if (resultDto.IsWinner)
             {
-                var existingWinner = await _work.Results.GetWinnerOfTableAsync(request.TableId);
+                var winner = await _work.Results.GetWinnerOfTableAsync(resultDto.TableId);
 
-                if (existingWinner is not null)
+                if (winner is not null)
                 {
                     return ApiResponse<ResultDTO>.ErrorResponse("This table already has a winner registered", 409);
                 }
@@ -133,13 +133,16 @@ namespace Domino.Application.Services
 
             try
             {
-                var result = _mapper.Map<Result>(request);
+                var result = _mapper.Map<Result>(resultDto);
                 await _work.Results.AddAsync(result);
 
-                var player = await _work.Players.GetByIdAsync(request.PlayerId);
-                player!.Elo = (short)Math.Clamp(player.Elo + request.Elo, 0, 3000);
-                player.WinGame = request.IsWinner ? player.WinGame + 1 : player.WinGame;
-                player.LostGame = !request.IsWinner ? player.LostGame + 1 : player.LostGame;
+                var player = await _work.Players.GetByIdAsync(resultDto.PlayerId);
+
+
+                player!.Elo = (short)Math.Clamp(player.Elo + resultDto.Elo, 0, 3000);
+
+                player.WinGame = resultDto.IsWinner ? player.WinGame + 1 : player.WinGame;
+                player.LostGame = !resultDto.IsWinner ? player.LostGame + 1 : player.LostGame;
 
                 _work.Players.Update(player);
 
@@ -155,7 +158,7 @@ namespace Domino.Application.Services
         }
 
 
-        public async Task<ApiResponse<ResultDTO>> UpdateAsync(int id, UpdateResultDTO request)
+        public async Task<ApiResponse<ResultDTO>> UpdateAsync(int id, UpdateResultDTO updateResultDTO)
         {
             var result = await _work.Results.GetByIdAsync(id);
 
@@ -164,7 +167,7 @@ namespace Domino.Application.Services
                 return ApiResponse<ResultDTO>.ErrorResponse($"Result with ID  was not found", 404);
             }
 
-            _mapper.Map(request, result);
+            _mapper.Map(updateResultDTO, result);
 
             _work.Results.Update(result);
             await _work.CompleteAsync();

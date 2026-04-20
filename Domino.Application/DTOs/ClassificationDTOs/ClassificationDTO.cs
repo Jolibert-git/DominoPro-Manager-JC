@@ -1,4 +1,5 @@
 ﻿using Domino.Application.DTOs.PlayerDTOs;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domino.Application.DTOs.ClassificationDTOs
 {

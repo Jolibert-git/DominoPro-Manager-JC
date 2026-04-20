@@ -51,13 +51,15 @@ namespace Domino.API.Controllers
         
 
         [HttpPut]
-        public async Task<IActionResult> Upsert( UpdateClassificationDTO request)
+        public async Task<IActionResult> Upsert( UpdateClassificationDTO updateClassificationDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var response = await _service.UpsertAsync(request );
+
+            var response = await _service.UpsertAsync(updateClassificationDTO);
+
             return StatusCode(response.StatusCode, response);
         }
 

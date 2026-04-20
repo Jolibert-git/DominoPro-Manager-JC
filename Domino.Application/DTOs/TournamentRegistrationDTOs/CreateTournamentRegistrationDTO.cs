@@ -9,13 +9,13 @@ namespace Domino.Application.DTOs.TournamentRegistrationDTOs
 {
     public class CreateTournamentRegistrationDTO
     {
-        [Required(ErrorMessage = "Player ID is required")]
+        [Required(ErrorMessage = "You need insert Player Id")]
         public int PlayerId { get; set; }
 
-        [Required(ErrorMessage = "Tournament ID is required")]
+        [Required(ErrorMessage = "You need insert tournament Id")]
         public int TournamentId { get; set; }
 
-        [Range(1, 1000)]
+        [Range(1, 1000, ErrorMessage = "Dolsal number our of range")]
         public short? DorsalNumber { get; set; }
 
         public bool PaymentFee { get; set; } = false;

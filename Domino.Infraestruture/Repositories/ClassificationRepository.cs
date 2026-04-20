@@ -15,11 +15,12 @@ namespace Domino.Infraestructure.Repositories
 
         public async Task<List<Classification>> GetByTournamentAsync(int tournamentId)
         {
-            return await _dbSet.AsNoTracking()
-                               .Include(c => c.Player)
+            return await _dbSet.Include(c => c.Player)
                                .Where(c => c.TournamentId == tournamentId)
                                .OrderBy(c => c.Position)
                                .ToListAsync();
+
+
         }
                
         
@@ -34,22 +35,21 @@ namespace Domino.Infraestructure.Repositories
 
         public async Task<List<Classification>> GetFinalStandingsAsync(int tournamentId)
         {
-            return await _dbSet.AsNoTracking()
-                           .Include(c => c.Player)
+            return await _dbSet.Include(c => c.Player)
                            .Where(c => c.TournamentId == tournamentId && c.IsFinal)
                            .OrderBy(c => c.Position)
                            .ToListAsync();
+
         }
                
 
         public async Task<List<Classification>> GetTopNAsync(int tournamentId, int n)
         {
-            return await _dbSet.AsNoTracking()
-                           .Include(c => c.Player)
-                           .Where(c => c.TournamentId == tournamentId)
-                           .OrderBy(c => c.Position)
-                           .Take(n)
-                           .ToListAsync();
+            return await _dbSet.Include(c => c.Player)
+                               .Where(c => c.TournamentId == tournamentId)
+                               .OrderBy(c => c.Position)
+                               .Take(n)
+                               .ToListAsync();
         }
             
     }

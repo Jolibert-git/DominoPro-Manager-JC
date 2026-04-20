@@ -109,7 +109,7 @@ namespace Domino.Application.Services
             }
         }
 
-        public async Task<ApiResponse<TournamentRegistrationDTO>> UpdateStatusAsync(int id, UpdateTournamentRegistrationStatusDTO request)
+        public async Task<ApiResponse<TournamentRegistrationDTO>> UpdateStatusAsync(int id, UpdateTournamentRegistrationStatusDTO UpdateTournamentStatusDTO)
         {
             var reg = await _work.Registrations.GetByIdAsync(id);
 
@@ -118,11 +118,11 @@ namespace Domino.Application.Services
                 return ApiResponse<TournamentRegistrationDTO>.ErrorResponse($"Registration with ID  was not found", 404);
             }
 
-            reg.Status = request.Status;
+            reg.Status = UpdateTournamentStatusDTO.Status;
 
-            if (request.PaymentFee.HasValue)
+            if (UpdateTournamentStatusDTO.PaymentFee.HasValue)
             {
-                reg.PaymentFee = request.PaymentFee.Value;
+                reg.PaymentFee = UpdateTournamentStatusDTO.PaymentFee.Value;
             }
 
             _work.Registrations.Update(reg);

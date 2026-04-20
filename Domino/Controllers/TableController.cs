@@ -10,7 +10,10 @@ namespace Domino.API.Controllers
     {
         private readonly ITableService _service;
 
-        public TableController(ITableService service) => _service = service;
+        public TableController(ITableService service) 
+        {
+            _service = service; 
+        }
 
 
 
@@ -49,30 +52,33 @@ namespace Domino.API.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
+
+
         [HttpPost]
-        public async Task<IActionResult> Create( CreateTableDTO request)
+        public async Task<IActionResult> Create( CreateTableDTO createTableDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var response = await _service.CreateAsync(request);
+            var response = await _service.CreateAsync(createTableDTO);
             return StatusCode(response.StatusCode, response);
         }
 
         [HttpPatch("{id:int}/Status")]
-        public async Task<IActionResult> UpdateStatus(int id, UpdateTableStatusDTO request)
+        public async Task<IActionResult> UpdateStatus(int id, UpdateTableStatusDTO updateTableStatusDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var response = await _service.UpdateStatusAsync(id, request);
+            var response = await _service.UpdateStatusAsync(id, updateTableStatusDTO);
 
             return StatusCode(response.StatusCode, response);
         }
+
 
         
         [HttpDelete("{id:int}")]

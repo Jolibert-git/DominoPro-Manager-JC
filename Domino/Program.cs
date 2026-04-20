@@ -14,7 +14,6 @@ namespace Domino
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
@@ -65,6 +64,10 @@ namespace Domino
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            
+
+            //app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseCors("AllowAll");
 

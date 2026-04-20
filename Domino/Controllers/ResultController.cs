@@ -10,7 +10,10 @@ namespace Domino.API.Controllers
     {
         private readonly IResultService _service;
 
-        public ResultController(IResultService service) => _service = service;
+        public ResultController(IResultService service) 
+        { 
+            _service = service; 
+        }
 
   
         [HttpGet("Table/{tableId:int}")]
@@ -58,26 +61,29 @@ namespace Domino.API.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Create( CreateResultDTO request )
+        public async Task<IActionResult> Create( CreateResultDTO createResultDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var response = await _service.CreateAsync(request );
+
+
+            var response = await _service.CreateAsync(createResultDTO);
             return StatusCode(response.StatusCode, response);
         }
 
         
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update( int id, UpdateResultDTO request)
+        public async Task<IActionResult> Update( int id, UpdateResultDTO updateResultDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var response = await _service.UpdateAsync(id, request );
+
+            var response = await _service.UpdateAsync(id, updateResultDTO);
             return StatusCode(response.StatusCode, response);
         }
 

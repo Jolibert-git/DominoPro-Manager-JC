@@ -11,7 +11,10 @@ namespace Domino.API.Controllers
     {
         private readonly ITournamentService _service;
 
-        public TournamentController(ITournamentService service) => _service = service;
+        public TournamentController(ITournamentService service) 
+        { 
+            _service = service; 
+        }
 
 
 
@@ -53,40 +56,40 @@ namespace Domino.API.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Create( CreateTournamentDTO request)
+        public async Task<IActionResult> Create( CreateTournamentDTO createTournamentDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var response = await _service.CreateAsync(request);
+            var response = await _service.CreateAsync(createTournamentDTO);
 
             return StatusCode(response.StatusCode, response);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, UpdateTournamentDTO request)
+        public async Task<IActionResult> Update(int id, UpdateTournamentDTO updateTournamentDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var response = await _service.UpdateAsync(id, request);
+            var response = await _service.UpdateAsync(id, updateTournamentDTO);
             return StatusCode(response.StatusCode, response);
         }
 
 
         [HttpPatch("{id:int}/Status")]
-        public async Task<IActionResult> UpdateStatus(int id, UpdateTournamentStatusDTO request)
+        public async Task<IActionResult> UpdateStatus(int id, UpdateTournamentStatusDTO updateTournamentStatusDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var response = await _service.UpdateStatusAsync(id, request);
+            var response = await _service.UpdateStatusAsync(id, updateTournamentStatusDTO);
 
             return StatusCode(response.StatusCode, response);
         }

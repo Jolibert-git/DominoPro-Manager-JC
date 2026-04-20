@@ -10,7 +10,10 @@ namespace Domino.API.Controllers
     {
         private readonly IRoundService _service;
 
-        public RoundController(IRoundService service) => _service = service;
+        public RoundController(IRoundService service) 
+        { 
+            _service = service; 
+        }
 
     
         [HttpGet("Tournament/{tournamentId:int}")]
@@ -48,13 +51,14 @@ namespace Domino.API.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Create( CreateRoundDTO request)
+        public async Task<IActionResult> Create( CreateRoundDTO createRoundDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var response = await _service.CreateAsync(request);
+
+            var response = await _service.CreateAsync(createRoundDTO);
 
             return StatusCode(response.StatusCode, response);
         }
@@ -62,13 +66,14 @@ namespace Domino.API.Controllers
 
 
         [HttpPatch("{id:int}/Status")]
-        public async Task<IActionResult> UpdateStatus(int id, UpdateRoundStatusDTO request)
+        public async Task<IActionResult> UpdateStatus(int id, UpdateRoundStatusDTO updateRoundStatusDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var response = await _service.UpdateStatusAsync(id, request);
+
+            var response = await _service.UpdateStatusAsync(id, updateRoundStatusDTO);
             return StatusCode(response.StatusCode, response);
         }
 

@@ -37,8 +37,10 @@ namespace Domino.Application.Services
         {
             if (min > max)
             {
-                return ApiResponse<List<PlayerDTO>>.ErrorResponse("Min Elo cannot be greater than Max Elo", 400);
+                return ApiResponse<List<PlayerDTO>>.ErrorResponse("Min Elo cannot be greater than Max Elo", 400);//throw new BadRequestException("Min Elo cannot be greater than Max Elo"); 
             }
+        
+
             var players = await _work.Players.GetByEloRangeAsync(min, max);
 
             return ApiResponse<List<PlayerDTO>>.SuccessResponse(_mapper.Map<List<PlayerDTO>>(players));
@@ -64,6 +66,7 @@ namespace Domino.Application.Services
             {
                 return ApiResponse<PlayerDTO>.ErrorResponse($"Player with email  was not found", 404);
             }
+
             return ApiResponse<PlayerDTO>.SuccessResponse(_mapper.Map<PlayerDTO>(player));
         }
 
@@ -78,16 +81,17 @@ namespace Domino.Application.Services
             return ApiResponse<PlayerDTO>.SuccessResponse(_mapper.Map<PlayerDTO>(player));
         }
 
-        public async Task<ApiResponse<PlayerDTO>> CreateAsync(CreatePlayerDTO request)
+        public async Task<ApiResponse<PlayerDTO>> CreateAsync(CreatePlayerDTO createPlayerDTO)
         {
-            var existing = await _work.Players.GetByEmailAsync(request.Email);
+            var existing = await _work.Players.GetByEmailAsync(createPlayerDTO.Email);
 
             if (existing is not null)
             {
                 return ApiResponse<PlayerDTO>.ErrorResponse($"A player with email already exists", 409);
             }
 
-            var player = _mapper.Map<Player>(request);
+            var player = _mapper.Map<Player>(createPlayerDTO);
+
             player.Name = player.Name.Trim();
             player.LastName = player.LastName.Trim();
             player.Email = player.Email.Trim().ToLower();
@@ -99,7 +103,7 @@ namespace Domino.Application.Services
             return ApiResponse<PlayerDTO>.CreatedResponse(_mapper.Map<PlayerDTO>(player));
         }
 
-        public async Task<ApiResponse<PlayerDTO>> UpdateAsync(int id, UpdatePlayerDTO request)
+        public async Task<ApiResponse<PlayerDTO>> UpdateAsync(int id, UpdatePlayerDTO updatePlayerDTO)
         {
             var player = await _work.Players.GetByIdAsync(id);
 
@@ -108,9 +112,9 @@ namespace Domino.Application.Services
                 return ApiResponse<PlayerDTO>.ErrorResponse($"Player with ID  was not found", 404);
             }
 
-            if (request.Email is not null && !request.Email.Equals(player.Email, StringComparison.OrdinalIgnoreCase))
+            if (updatePlayerDTO.Email is not null && !updatePlayerDTO.Email.Equals(player.Email, StringComparison.OrdinalIgnoreCase))
             {
-                var emailTaken = await _work.Players.GetByEmailAsync(request.Email);
+                var emailTaken = await _work.Players.GetByEmailAsync(updatePlayerDTO.Email);
 
                 if (emailTaken is not null)
                 {
@@ -118,7 +122,7 @@ namespace Domino.Application.Services
                 }
             }
 
-            _mapper.Map(request, player);
+            _mapper.Map(updatePlayerDTO, player);
 
             _work.Players.Update(player);
             await _work.CompleteAsync();

@@ -1,5 +1,7 @@
 ﻿
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Domino.Application.DTOs.ResultDTOs
 {
     public class UpdateResultDTO
@@ -11,11 +13,10 @@ namespace Domino.Application.DTOs.ResultDTOs
         public bool? IsWinner { get; set; }
 
         public bool? WonBlock { get; set; }
-
+        [Range(1, 270, ErrorMessage = "Out of range")]
         public byte? RemainingChips { get; set; }
 
-        public int? Elo { get; set; }
-
+        
         public byte? Position { get; set; }
     }
 }

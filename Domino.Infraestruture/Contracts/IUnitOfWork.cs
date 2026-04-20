@@ -2,7 +2,7 @@
 
 namespace Domino.Infraestructure.Contracs
 {
-    public interface IUnitOfWork: IAsyncDisposable
+    public interface IUnitOfWork
     {
         IPlayerRepository Players { get; }
         ITournamentRepository Tournaments { get; }

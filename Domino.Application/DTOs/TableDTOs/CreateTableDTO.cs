@@ -4,11 +4,11 @@ namespace Domino.Application.DTOs.TableDTOs
 {
     public class CreateTableDTO
     {
-        [Required(ErrorMessage = "Round ID is required")]
+        [Required(ErrorMessage = "You need insert round Id")]
         public int RoundId { get; set; }
 
-        [Required]
-        [Range(1, 200)]
-        public int TableNumber { get; set; }
+        [Required(ErrorMessage = "You need insert table number")]
+        [Range(1, 200, ErrorMessage = "Our of Range")]
+        public short TableNumber { get; set; }
     }
 }

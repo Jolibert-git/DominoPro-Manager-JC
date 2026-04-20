@@ -7,7 +7,7 @@ namespace Domino.Application.DTOs.TournamentDTOs
     public class UpdateTournamentStatusDTO
     {
         [Required]
-        [EnumDataType(typeof(TournamentStatus))]
-        public TournamentStatus Status { get; set; }
+        [EnumDataType(typeof(TournamentStatus), ErrorMessage = "Tournament status not validated")]
+        public TournamentStatus Status { get; set; } = TournamentStatus.Programmed;
     }
 }

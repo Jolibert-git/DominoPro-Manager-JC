@@ -8,12 +8,14 @@ namespace Domino.Infraestructure.Repositories
 {
     public class TableRepository : GenericRepository<Table>, ITableRepository
     {
-        public TableRepository(ApplicationDbContext context) : base(context) { }
+        public TableRepository(ApplicationDbContext context) 
+            : base(context) 
+        {
+        }
 
         public async Task<List<Table>> GetByRoundAsync(int roundId)
         {
-            return await _dbSet.AsNoTracking()
-                               .Where(m => m.RoundId == roundId)
+            return await _dbSet.Where(m => m.RoundId == roundId)
                                .OrderBy(m => m.TableNumber)
                                .ToListAsync();
         }
@@ -22,16 +24,15 @@ namespace Domino.Infraestructure.Repositories
         {
             return await _dbSet
                     .Include(m => m.Results)
-                        .ThenInclude(r => r.Player)
+                    .ThenInclude(r => r.Player)
                     .Include(m => m.Results)
-                        .ThenInclude(r => r.Playmate)
+                    .ThenInclude(r => r.Playmate)
                     .FirstOrDefaultAsync(m => m.Id == tableId);
         }
 
         public async Task<List<Table>> GetPendingByRoundAsync(int roundId)
         {
-            return await _dbSet.AsNoTracking()
-                               .Where(m => m.RoundId == roundId &&
+            return await _dbSet.Where(m => m.RoundId == roundId &&
                                            m.Status == GameStatus.Pending)
                                .OrderBy(m => m.TableNumber)
                                .ToListAsync();

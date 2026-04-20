@@ -56,13 +56,22 @@ namespace Domino.Infraestructure.Repositories
             
 
         public void Update(T entity)
-            => _dbSet.Update(entity);
+        {
+            _dbSet.Update(entity);
+        }
+            
 
         public void Remove(T entity)
-            => _dbSet.Remove(entity);
+        {
+            _dbSet.Remove(entity);
+        }
+            
 
         public void RemoveRange(List<T> entities)
-            => _dbSet.RemoveRange(entities);
+        {
+            _dbSet.RemoveRange(entities);
+        }
+           
 
         public async Task<bool> ExistsAsync(int id)
         {

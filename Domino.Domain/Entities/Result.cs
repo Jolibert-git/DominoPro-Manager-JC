@@ -5,9 +5,9 @@ namespace Domino.Domain.Entities
 {
     public class Result: HasId
     {
-        [Required(ErrorMessage = "You need insert Table Id")]
+        [Required]
         public int TableId { get; set; }
-        [Required(ErrorMessage = "You need insert Player Id")]
+        [Required]
         public int PlayerId { get; set; }
         public int? PlaymateId { get; set; } 
         public int Point { get; set; } = 0;
@@ -20,7 +20,7 @@ namespace Domino.Domain.Entities
         public int Elo { get; set; }
 
   
-        [Required(ErrorMessage = "You need insert Position")]
+        [Required]
         public byte Position { get; set; } = 2;
 
         public Table Table { get; set; } = null!;

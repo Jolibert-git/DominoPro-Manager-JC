@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DominoPro Manager</title>
+  <link rel="stylesheet" href="DominoPro2.css" />
+</head>
+<body>
+ 
+  <!-- ========================================================
+       NAVBAR SUPERIOR
+  ========================================================= -->
+  <header class="navbar" id="main-navbar">
+    <div class="navbar__brand">
+      <span class="navbar__logo" aria-hidden="true">⬛</span>
+      <span class="navbar__title">DominoPro <strong>Manager</strong></span>
+    </div>
+ 
+    <nav class="navbar__links" aria-label="Navegación principal superior">
+      <a href="#" class="nav-link active" data-section="dashboard">Dashboard</a>
+      <a href="#" class="nav-link" data-section="tournaments">Torneos</a>
+      <a href="#" class="nav-link" data-section="players">Jugadores</a>
+      <a href="#" class="nav-link" data-section="rounds">Rondas</a>
+      <a href="#" class="nav-link" data-section="tables">Mesas</a>
+      <a href="#" class="nav-link" data-section="results">Resultados</a>
+      <a href="#" class="nav-link" data-section="classification">Clasificación</a>
+    </nav>
+ 
+    <div class="navbar__actions">
+      <button class="btn btn--icon" id="sidebar-toggle" aria-label="Abrir menú lateral" aria-expanded="false" aria-controls="sidebar">
+        ☰
+      </button>
+      <div class="navbar__user">
+        <span class="avatar" aria-hidden="true">AD</span>
+        <span class="navbar__username">Admin</span>
+      </div>
+    </div>
+  </header>
+ 
+  <!-- ========================================================
+       LAYOUT PRINCIPAL (Sidebar + Contenido)
+  ========================================================= -->
+  <div class="app-layout">
+ 
+    <!-- SIDEBAR LATERAL -->
+    <aside class="sidebar" id="sidebar" aria-label="Menú lateral">
+      <div class="sidebar__header">
+        <span class="sidebar__section-label">Menú</span>
+        <button class="btn btn--icon sidebar__close" id="sidebar-close" aria-label="Cerrar menú lateral">✕</button>
+      </div>
+ 
+      <nav class="sidebar__nav">
+ 
+        <div class="sidebar__group">
+          <span class="sidebar__group-label">General</span>
+          <ul role="list">
+            <li>
+              <a href="#" class="sidebar__link active" data-section="dashboard" aria-current="page">
+                <span class="sidebar__icon" aria-hidden="true">📊</span>
+                Dashboard
+              </a>
+            </li>
+            <li>
+              <a href="#" class="sidebar__link" data-section="tournaments">
+                <span class="sidebar__icon" aria-hidden="true">🏆</span>
+                Torneos
+              </a>
+            </li>
+          </ul>
+        </div>
+ 
+        <div class="sidebar__group">
+          <span class="sidebar__group-label">Torneo Activo</span>
+          <ul role="list">
+            <li>
+              <a href="#" class="sidebar__link" data-section="players">
+                <span class="sidebar__icon" aria-hidden="true">👥</span>
+                Jugadores
+              </a>
+            </li>
+            <li>
+              <a href="#" class="sidebar__link" data-section="rounds">
+                <span class="sidebar__icon" aria-hidden="true">🔄</span>
+                Rondas
+              </a>
+            </li>
+            <li>
+              <a href="#" class="sidebar__link" data-section="tables">
+                <span class="sidebar__icon" aria-hidden="true">🎮</span>
+                Mesas
+              </a>
+            </li>
+            <li>
+              <a href="#" class="sidebar__link" data-section="results">
+                <span class="sidebar__icon" aria-hidden="true">📋</span>
+                Resultados
+              </a>
+            </li>
+            <li>
+              <a href="#" class="sidebar__link" data-section="classification">
+                <span class="sidebar__icon" aria-hidden="true">🥇</span>
+                Clasificación
+              </a>
+            </li>
+          </ul>
+        </div>
+ 
+        <div class="sidebar__group">
+          <span class="sidebar__group-label">Registros</span>
+          <ul role="list">
+            <li>
+              <a href="#" class="sidebar__link" data-section="registrations">
+                <span class="sidebar__icon" aria-hidden="true">📝</span>
+                Inscripciones
+              </a>
+            </li>
+          </ul>
+        </div>
+ 
+      </nav>
+ 
+      <div class="sidebar__footer">
+        <span class="sidebar__version">v1.0.0</span>
+      </div>
+    </aside>
+ 
+    <!-- OVERLAY para el sidebar en móvil -->
+    <div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
+ 
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content" id="main-content">
+ 
+      <!-- =====================================================
+           SECCIÓN: DASHBOARD
+      ====================================================== -->
+      <section id="section-dashboard" class="section active" aria-labelledby="dashboard-title">
+ 
+        <div class="page-header">
+          <div>
+            <h1 id="dashboard-title" class="page-title">Dashboard</h1>
+            <p class="page-subtitle">Resumen general del sistema</p>
+          </div>
+          <div class="page-header__actions">
+            <button class="btn btn--primary" data-section="tournaments" data-action="new">
+              + Nuevo Torneo
+            </button>
+          </div>
+        </div>
+ 
+        <!-- Tarjetas de estadísticas -->
+        <div class="stats-grid">
+          <article class="stat-card stat-card--tournaments">
+            <div class="stat-card__icon" aria-hidden="true">🏆</div>
+            <div class="stat-card__body">
+              <span class="stat-card__label">Torneos Activos</span>
+              <span class="stat-card__value" id="stat-active-tournaments">—</span>
+            </div>
+          </article>
+          <article class="stat-card stat-card--players">
+            <div class="stat-card__icon" aria-hidden="true">👥</div>
+            <div class="stat-card__body">
+              <span class="stat-card__label">Jugadores Registrados</span>
+              <span class="stat-card__value" id="stat-total-players">—</span>
+            </div>
+          </article>
+          <article class="stat-card stat-card--rounds">
+            <div class="stat-card__icon" aria-hidden="true">🔄</div>
+            <div class="stat-card__body">
+              <span class="stat-card__label">Rondas en Curso</span>
+              <span class="stat-card__value" id="stat-active-rounds">—</span>
+            </div>
+          </article>
+          <article class="stat-card stat-card--tables">
+            <div class="stat-card__icon" aria-hidden="true">🎮</div>
+            <div class="stat-card__body">
+              <span class="stat-card__label">Mesas Activas</span>
+              <span class="stat-card__value" id="stat-active-tables">—</span>
+            </div>
+          </article>
+        </div>
+ 
+        <!-- Sección inferior del dashboard -->
+        <div class="dashboard-grid">
+ 
+          <!-- Torneos recientes -->
+          <div class="card">
+            <div class="card__header">
+              <h2 class="card__title">Torneos Recientes</h2>
+              <a href="#" class="link" data-section="tournaments">Ver todos</a>
+            </div>
+            <div class="card__body">
+              <table class="table" aria-label="Torneos recientes">
+                <thead>
+                  <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Modo</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Jugadores</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboard-tournaments-body">
+                  <tr>
+                    <td colspan="4" class="table__empty">Cargando datos...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+ 
+          <!-- Top jugadores -->
+          <div class="card">
+            <div class="card__header">
+              <h2 class="card__title">Top Jugadores (Elo)</h2>
+              <a href="#" class="link" data-section="players">Ver todos</a>
+            </div>
+            <div class="card__body">
+              <ol class="leaderboard" id="dashboard-leaderboard" aria-label="Ranking de jugadores">
+                <li class="leaderboard__empty">Cargando datos...</li>
+              </ol>
+            </div>
+          </div>
+ 
+        </div>
+      </section>
+ 
+      <!-- =====================================================
+           SECCIÓN: TORNEOS
+      ====================================================== -->
+      <section id="section-tournaments" class="section" aria-labelledby="tournaments-title" hidden>
+ 
+        <div class="page-header">
+          <div>
+            <h1 id="tournaments-title" class="page-title">Torneos</h1>
+            <p class="page-subtitle">Administra todos los torneos del sistema</p>
+          </div>
+          <div class="page-header__actions">
+            <button class="btn btn--primary" id="btn-new-tournament">+ Nuevo Torneo</button>
+          </div>
+        </div>
+ 
+        <!-- Filtros -->
+        <div class="filters-bar">
+          <div class="filter-group">
+            <label for="filter-tournament-status" class="filter-label">Estado:</label>
+            <select id="filter-tournament-status" class="select">
+              <option value="">Todos</option>
+              <option value="Programmed">Programado</option>
+              <option value="InCourse">En Curso</option>
+              <option value="Finalized">Finalizado</option>
+              <option value="Canceled">Cancelado</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="filter-tournament-mode" class="filter-label">Modo:</label>
+            <select id="filter-tournament-mode" class="select">
+              <option value="">Todos</option>
+              <option value="1">Singles</option>
+              <option value="0">Dobles</option>
+            </select>
+          </div>
+          <button class="btn btn--secondary" id="btn-filter-tournaments">Filtrar</button>
+        </div>
+ 
+        <!-- Tabla de torneos -->
+        <div class="card">
+          <div class="card__body">
+            <table class="table" aria-label="Lista de torneos">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Modo</th>
+                  <th scope="col">Lugar</th>
+                  <th scope="col">Fecha Inicio</th>
+                  <th scope="col">Jugadores</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tournaments-body">
+                <tr>
+                  <td colspan="8" class="table__empty">Cargando torneos...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+ 
+        <!-- MODAL: Nuevo / Editar Torneo -->
+        <dialog class="modal" id="modal-tournament" aria-labelledby="modal-tournament-title">
+          <div class="modal__content">
+            <div class="modal__header">
+              <h2 id="modal-tournament-title" class="modal__title">Nuevo Torneo</h2>
+              <button class="btn btn--icon modal__close" aria-label="Cerrar modal">✕</button>
+            </div>
+            <form class="form" id="form-tournament" novalidate>
+              <input type="hidden" id="tournament-id" name="id" />
+ 
+              <div class="form__grid form__grid--2">
+                <div class="form__group">
+                  <label for="tournament-name" class="form__label">Nombre <span aria-hidden="true">*</span></label>
+                  <input type="text" id="tournament-name" name="name" class="input" required minlength="2" maxlength="50" placeholder="Nombre del torneo" />
+                  <span class="form__error" role="alert" id="err-tournament-name"></span>
+                </div>
+                <div class="form__group">
+                  <label for="tournament-mode" class="form__label">Modo <span aria-hidden="true">*</span></label>
+                  <select id="tournament-mode" name="mode" class="select" required>
+                    <option value="">Seleccionar...</option>
+                    <option value="1">Dobles</option>
+                    <option value="0">Singles</option>
+                  </select>
+                  <span class="form__error" role="alert" id="err-tournament-mode"></span>
+                </div>
+              </div>
+ 
+              <div class="form__group">
+                <label for="tournament-description" class="form__label">Descripción</label>
+                <textarea id="tournament-description" name="description" class="textarea" rows="3" maxlength="500" placeholder="Descripción opcional..."></textarea>
+              </div>
+ 
+              <div class="form__grid form__grid--2">
+                <div class="form__group">
+                  <label for="tournament-place" class="form__label">Lugar</label>
+                  <input type="text" id="tournament-place" name="place" class="input" placeholder="Ciudad o dirección" />
+                </div>
+                <div class="form__group">
+                  <label for="tournament-prize" class="form__label">Premio</label>
+                  <input type="text" id="tournament-prize" name="prize" class="input" placeholder="Descripción del premio" />
+                </div>
+              </div>
+ 
+              <div class="form__grid form__grid--2">
+                <div class="form__group">
+                  <label for="tournament-start-date" class="form__label">Fecha de Inicio <span aria-hidden="true">*</span></label>
+                  <input type="datetime-local" id="tournament-start-date" name="startDate" class="input" required />
+                  <span class="form__error" role="alert" id="err-tournament-start-date"></span>
+                </div>
+                <div class="form__group">
+                  <label for="tournament-end-date" class="form__label">Fecha de Cierre</label>
+                  <input type="datetime-local" id="tournament-end-date" name="endDate" class="input" />
+                </div>
+              </div>
+ 
+              <div class="form__grid form__grid--3">
+                <div class="form__group">
+                  <label for="tournament-min-players" class="form__label">Mín. Jugadores</label>
+                  <input type="number" id="tournament-min-players" name="minPlayers" class="input" min="4" max="1000" value="4" />
+                </div>
+                <div class="form__group">
+                  <label for="tournament-max-players" class="form__label">Máx. Jugadores</label>
+                  <input type="number" id="tournament-max-players" name="maxPlayers" class="input" min="4" max="1000" placeholder="Sin límite" />
+                </div>
+                <div class="form__group">
+                  <label for="tournament-max-rounds" class="form__label">Máx. Rondas</label>
+                  <input type="number" id="tournament-max-rounds" name="maxRound" class="input" min="1" max="50" placeholder="Sin límite" />
+                </div>
+              </div>
+ 
+              <div class="form__group">
+                <label for="tournament-target-point" class="form__label">Puntos Objetivo</label>
+                <input type="number" id="tournament-target-point" name="targetPoint" class="input" min="50" max="5000" value="100" />
+              </div>
+ 
+              <div class="modal__footer">
+                <button type="button" class="btn btn--secondary modal__cancel">Cancelar</button>
+                <button type="submit" class="btn btn--primary">Guardar Torneo</button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+ 
+        <!-- MODAL: Cambiar Estado del Torneo -->
+        <dialog class="modal" id="modal-tournament-status" aria-labelledby="modal-tournament-status-title">
+          <div class="modal__content modal__content--sm">
+            <div class="modal__header">
+              <h2 id="modal-tournament-status-title" class="modal__title">Cambiar Estado</h2>
+              <button class="btn btn--icon modal__close" aria-label="Cerrar modal">✕</button>
+            </div>
+            <form class="form" id="form-tournament-status" novalidate>
+              <input type="hidden" id="tournament-status-id" name="id" />
+              <div class="form__group">
+                <label for="tournament-new-status" class="form__label">Nuevo Estado</label>
+                <select id="tournament-new-status" name="status" class="select" required>
+                  <option value="">Seleccionar...</option>
+                  <option value="1">En Curso</option>
+                  <option value="2">Finalizado</option>
+                  <option value="3">Cancelado</option>
+                </select>
+              </div>
+              <div class="modal__footer">
+                <button type="button" class="btn btn--secondary modal__cancel">Cancelar</button>
+                <button type="submit" class="btn btn--primary">Actualizar</button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+ 
+      </section>
+ 
+      <!-- =====================================================
+           SECCIÓN: JUGADORES
+      ====================================================== -->
+      <section id="section-players" class="section" aria-labelledby="players-title" hidden>
+ 
+        <div class="page-header">
+          <div>
+            <h1 id="players-title" class="page-title">Jugadores</h1>
+            <p class="page-subtitle">Gestión de jugadores registrados</p>
+          </div>
+          <div class="page-header__actions">
+            <button class="btn btn--primary" id="btn-new-player">+ Nuevo Jugador</button>
+          </div>
+        </div>
+ 
+        <!-- Búsqueda y filtros -->
+        <div class="filters-bar">
+          <div class="filter-group filter-group--search">
+            <label for="search-player" class="filter-label visually-hidden">Buscar jugador</label>
+            <input type="search" id="search-player" class="input" placeholder="🔍 Buscar por nombre o email..." />
+          </div>
+          <div class="filter-group">
+            <label for="filter-player-status" class="filter-label">Estado:</label>
+            <select id="filter-player-status" class="select">
+              <option value="">Todos</option>
+              <option value="true">Activos</option>
+              <option value="false">Inactivos</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="filter-elo-min" class="filter-label">Elo mín:</label>
+            <input type="number" id="filter-elo-min" class="input input--sm" min="0" max="3000" placeholder="0" />
+          </div>
+          <div class="filter-group">
+            <label for="filter-elo-max" class="filter-label">Elo máx:</label>
+            <input type="number" id="filter-elo-max" class="input input--sm" min="0" max="3000" placeholder="3000" />
+          </div>
+          <button class="btn btn--secondary" id="btn-filter-players">Filtrar</button>
+        </div>
+ 
+        <!-- Tabla de jugadores -->
+        <div class="card">
+          <div class="card__body">
+            <table class="table" aria-label="Lista de jugadores">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Teléfono</th>
+                  <th scope="col">Elo</th>
+                  <th scope="col">Victorias</th>
+                  <th scope="col">Derrotas</th>
+                  <th scope="col">Win Rate</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="players-body">
+                <tr>
+                  <td colspan="10" class="table__empty">Cargando jugadores...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card__footer">
+            <div class="pagination" id="players-pagination" role="navigation" aria-label="Paginación de jugadores">
+              <button class="btn btn--sm btn--secondary" id="players-prev" disabled aria-label="Página anterior">&#8592; Anterior</button>
+              <span class="pagination__info" id="players-page-info">Página 1</span>
+              <button class="btn btn--sm btn--secondary" id="players-next" aria-label="Página siguiente">Siguiente &#8594;</button>
+            </div>
+          </div>
+        </div>
+ 
+        <!-- MODAL: Nuevo / Editar Jugador -->
+        <dialog class="modal" id="modal-player" aria-labelledby="modal-player-title">
+          <div class="modal__content">
+            <div class="modal__header">
+              <h2 id="modal-player-title" class="modal__title">Nuevo Jugador</h2>
+              <button class="btn btn--icon modal__close" aria-label="Cerrar modal">✕</button>
+            </div>
+            <form class="form" id="form-player" novalidate>
+              <input type="hidden" id="player-id" name="id" />
+ 
+              <div class="form__grid form__grid--2">
+                <div class="form__group">
+                  <label for="player-name" class="form__label">Nombre <span aria-hidden="true">*</span></label>
+                  <input type="text" id="player-name" name="name" class="input" required minlength="2" maxlength="50" placeholder="Nombre" />
+                  <span class="form__error" role="alert" id="err-player-name"></span>
+                </div>
+                <div class="form__group">
+                  <label for="player-lastname" class="form__label">Apellido <span aria-hidden="true">*</span></label>
+                  <input type="text" id="player-lastname" name="lastName" class="input" required minlength="2" maxlength="50" placeholder="Apellido" />
+                  <span class="form__error" role="alert" id="err-player-lastname"></span>
+                </div>
+              </div>
+ 
+              <div class="form__grid form__grid--2">
+                <div class="form__group">
+                  <label for="player-email" class="form__label">Email</label>
+                  <input type="email" id="player-email" name="email" class="input" placeholder="correo@ejemplo.com" />
+                  <span class="form__error" role="alert" id="err-player-email"></span>
+                </div>
+                <div class="form__group">
+                  <label for="player-phone" class="form__label">Teléfono</label>
+                  <input type="tel" id="player-phone" name="phone" class="input" placeholder="809-000-0000" maxlength="15" />
+                  <span class="form__error" role="alert" id="err-player-phone"></span>
+                </div>
+              </div>
+ 
+              <div class="modal__footer">
+                <button type="button" class="btn btn--secondary modal__cancel">Cancelar</button>
+                <button type="submit" class="btn btn--primary">Guardar Jugador</button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+ 
+        <!-- MODAL: Detalle del Jugador con Estadísticas -->
+        <dialog class="modal" id="modal-player-stats" aria-labelledby="modal-player-stats-title">
+          <div class="modal__content">
+            <div class="modal__header">
+              <h2 id="modal-player-stats-title" class="modal__title">Estadísticas del Jugador</h2>
+              <button class="btn btn--icon modal__close" aria-label="Cerrar modal">✕</button>
+            </div>
+            <div id="player-stats-body">
+              <!-- Se rellena dinámicamente con JS -->
+              <div class="player-profile">
+                <div class="player-profile__avatar" id="stats-avatar" aria-hidden="true">AB</div>
+                <div class="player-profile__info">
+                  <h3 id="stats-fullname" class="player-profile__name">—</h3>
+                  <p id="stats-email" class="player-profile__email">—</p>
+                </div>
+              </div>
+              <div class="stats-mini-grid">
+                <div class="stats-mini-card">
+                  <span class="stats-mini-card__label">Elo</span>
+                  <span class="stats-mini-card__value" id="stats-elo">—</span>
+                </div>
+                <div class="stats-mini-card">
+                  <span class="stats-mini-card__label">Victorias</span>
+                  <span class="stats-mini-card__value" id="stats-wins">—</span>
+                </div>
+                <div class="stats-mini-card">
+                  <span class="stats-mini-card__label">Derrotas</span>
+                  <span class="stats-mini-card__value" id="stats-losses">—</span>
+                </div>
+                <div class="stats-mini-card">
+                  <span class="stats-mini-card__label">Win Rate</span>
+                  <span class="stats-mini-card__value" id="stats-winrate">—</span>
+                </div>
+              </div>
+            </div>
+            <div class="modal__footer">
+              <button type="button" class="btn btn--secondary modal__cancel">Cerrar</button>
+            </div>
+          </div>
+        </dialog>
+ 
+      </section>
+ 
+      <!-- =====================================================
+           SECCIÓN: INSCRIPCIONES
+      ====================================================== -->
+      <section id="section-registrations" class="section" aria-labelledby="registrations-title" hidden>
+ 
+        <div class="page-header">
+          <div>
+            <h1 id="registrations-title" class="page-title">Inscripciones</h1>
+            <p class="page-subtitle">Gestión de inscripciones por torneo</p>
+          </div>
+          <div class="page-header__actions">
+            <button class="btn btn--primary" id="btn-new-registration">+ Nueva Inscripción</button>
+          </div>
+        </div>
+ 
+        <!-- Selector de torneo -->
+        <div class="filters-bar">
+          <div class="filter-group">
+            <label for="filter-registration-tournament" class="filter-label">Torneo:</label>
+            <select id="filter-registration-tournament" class="select">
+              <option value="">Seleccionar torneo...</option>
+            </select>
+          </div>
+          <button class="btn btn--secondary" id="btn-load-registrations">Cargar</button>
+        </div>
+ 
+        <div class="card">
+          <div class="card__body">
+            <table class="table" aria-label="Lista de inscripciones">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Jugador</th>
+                  <th scope="col">Dorsal</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Pago</th>
+                  <th scope="col">Fecha Inscripción</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="registrations-body">
+                <tr>
+                  <td colspan="7" class="table__empty">Selecciona un torneo para ver las inscripciones.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+ 
+        <!-- MODAL: Nueva Inscripción -->
+        <dialog class="modal" id="modal-registration" aria-labelledby="modal-registration-title">
+          <div class="modal__content modal__content--sm">
+            <div class="modal__header">
+              <h2 id="modal-registration-title" class="modal__title">Nueva Inscripción</h2>
+              <button class="btn btn--icon modal__close" aria-label="Cerrar modal">✕</button>
+            </div>
+            <form class="form" id="form-registration" novalidate>
+              <div class="form__group">
+                <label for="reg-tournament" class="form__label">Torneo <span aria-hidden="true">*</span></label>
+                <select id="reg-tournament" name="tournamentId" class="select" required>
+                  <option value="">Seleccionar torneo...</option>
+                </select>
+                <span class="form__error" role="alert" id="err-reg-tournament"></span>
+              </div>
+              <div class="form__group">
+                <label for="reg-player" class="form__label">Jugador <span aria-hidden="true">*</span></label>
+                <select id="reg-player" name="playerId" class="select" required>
+                  <option value="">Seleccionar jugador...</option>
+                </select>
+                <span class="form__error" role="alert" id="err-reg-player"></span>
+              </div>
+              <div class="form__grid form__grid--2">
+                <div class="form__group">
+                  <label for="reg-dorsal" class="form__label">Número Dorsal</label>
+                  <input type="number" id="reg-dorsal" name="dorsalNumber" class="input" min="1" max="1000" placeholder="Opcional" />
+                </div>
+                <div class="form__group form__group--checkbox">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="reg-payment" name="paymentFee" class="checkbox" />
+                    <span>Pago realizado</span>
+                  </label>
+                </div>
+              </div>
+              <div class="modal__footer">
+                <button type="button" class="btn btn--secondary modal__cancel">Cancelar</button>
+                <button type="submit" class="btn btn--primary">Inscribir</button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+ 
+        <!-- MODAL: Actualizar Estado de Inscripción -->
+        <dialog class="modal" id="modal-registration-status" aria-labelledby="modal-reg-status-title">
+          <div class="modal__content modal__content--sm">
+            <div class="modal__header">
+              <h2 id="modal-reg-status-title" class="modal__title">Actualizar Inscripción</h2>
+              <button class="btn btn--icon modal__close" aria-label="Cerrar modal">✕</button>
+            </div>
+            <form class="form" id="form-registration-status" novalidate>
+              <input type="hidden" id="reg-status-id" name="id" />
+              <div class="form__group">
+                <label for="reg-new-status" class="form__label">Estado</label>
+                <select id="reg-new-status" name="status" class="select" required>
+                  <option value="Pending">Pendiente</option>
+                  <option value="Confirmed">Confirmado</option>
+                  <option value="Withdrawn">Retirado</option>
+                  <option value="Disqualified">Descalificado</option>
+                </select>
+              </div>
+              <div class="form__group form__group--checkbox">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="reg-status-payment" name="paymentFee" class="checkbox" />
+                  <span>Pago realizado</span>
+                </label>
+              </div>
+              <div class="modal__footer">
+                <button type="button" class="btn btn--secondary modal__cancel">Cancelar</button>
+                <button type="submit" class="btn btn--primary">Actualizar</button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+ 
+      </section>
+ 
+      <!-- =====================================================
+           SECCIÓN: RONDAS
+      ====================================================== -->
+      <section id="section-rounds" class="section" aria-labelledby="rounds-title" hidden>
+ 
+        <div class="page-header">
+          <div>
+            <h1 id="rounds-title" class="page-title">Rondas</h1>
+            <p class="page-subtitle">Control de rondas del torneo activo</p>
+          </div>
+          <div class="page-header__actions">
+            <button class="btn btn--primary" id="btn-new-round">+ Nueva Ronda</button>
+          </div>
+        </div>
+ 
+        <!-- Selector de torneo -->
+        <div class="filters-bar">
+          <div class="filter-group">
+            <label for="filter-round-tournament" class="filter-label">Torneo:</label>
+            <select id="filter-round-tournament" class="select">
+              <option value="">Seleccionar torneo...</option>
+            </select>
+          </div>
+          <button class="btn btn--secondary" id="btn-load-rounds">Cargar</button>
+        </div>
+ 
+        <!-- Ronda actual destacada -->
+        <div class="current-round-banner" id="current-round-banner" hidden>
+          <div class="current-round-banner__inner">
+            <div>
+              <span class="badge badge--live">● EN VIVO</span>
+              <h2 id="current-round-label" class="current-round-banner__title">Ronda —</h2>
+            </div>
+            <div class="current-round-banner__meta">
+              <span id="current-round-tables">— mesas</span>
+              <span id="current-round-progress">— completadas</span>
+            </div>
+            <button class="btn btn--accent" id="btn-go-current-round">Ver Ronda</button>
+          </div>
+        </div>
+ 
+        <!-- Tabla de rondas -->
+        <div class="card">
+          <div class="card__body">
+            <table class="table" aria-label="Lista de rondas">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Ronda</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Inicio</th>
+                  <th scope="col">Fin</th>
+                  <th scope="col">Mesas</th>
+                  <th scope="col">Completadas</th>
+                  <th scope="col">Duración</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="rounds-body">
+                <tr>
+                  <td colspan="9" class="table__empty">Selecciona un torneo para ver las rondas.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+ 
+        <!-- MODAL: Nueva Ronda -->
+        <dialog class="modal" id="modal-round" aria-labelledby="modal-round-title">
+          <div class="modal__content modal__content--sm">
+            <div class="modal__header">
+              <h2 id="modal-round-title" class="modal__title">Nueva Ronda</h2>
+              <button class="btn btn--icon modal__close" aria-label="Cerrar modal">✕</button>
+            </div>
+            <form class="form" id="form-round" novalidate>
+              <div class="form__group">
+                <label for="round-tournament" class="form__label">Torneo <span aria-hidden="true">*</span></label>
+                <select id="round-tournament" name="tournamentId" class="select" required>
+                  <option value="">Seleccionar torneo...</option>
+                </select>
+                <span class="form__error" role="alert" id="err-round-tournament"></span>
+              </div>
+              <div class="form__group">
+                <label for="round-number" class="form__label">Número de Ronda <span aria-hidden="true">*</span></label>
+                <input type="number" id="round-number" name="roundNumber" class="input" min="1" max="100" required />
+                <span class="form__error" role="alert" id="err-round-number"></span>
+              </div>
+              <div class="form__group">
+                <label for="round-start-date" class="form__label">Fecha de Inicio</label>
+                <input type="datetime-local" id="round-start-date" name="startDate" class="input" />
+              </div>
+              <div class="modal__footer">
+                <button type="button" class="btn btn--secondary modal__cancel">Cancelar</button>
+                <button type="submit" class="btn btn--primary">Crear Ronda</button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+ 
+        <!-- MODAL: Cambiar Estado de Ronda -->
+        <dialog class="modal" id="modal-round-status" aria-labelledby="modal-round-status-title">
+          <div class="modal__content modal__content--sm">
+            <div class="modal__header">
+              <h2 id="modal-round-status-title" class="modal__title">Cambiar Estado de Ronda</h2>
+              <button class="btn btn--icon modal__close" aria-label="Cerrar modal">✕</button>
+            </div>
+            <form class="form" id="form-round-status" novalidate>
+              <input type="hidden" id="round-status-id" name="id" />
+              <div class="form__group">
+                <label for="round-new-status" class="form__label">Nuevo Estado</label>
+                <select id="round-new-status" name="status" class="select" required>
+                  <option value="">Seleccionar...</option>
+                  <option value="InPlay">En Juego</option>
+                  <option value="Completed">Completada</option>
+                </select>
+              </div>
+              <div class="form__group">
+                <label for="round-end-date" class="form__label">Fecha de Cierre</label>
+                <input type="datetime-local" id="round-end-date" name="endDate" class="input" />
+              </div>
+              <div class="modal__footer">
+                <button type="button" class="btn btn--secondary modal__cancel">Cancelar</button>
+                <button type="submit" class="btn btn--primary">Actualizar</button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+ 
+      </section>
+ 
+      <!-- =====================================================
+           SECCIÓN: MESAS
+      ====================================================== -->
+      <section id="section-tables" class="section" aria-labelledby="tables-title" hidden>
+ 
+        <div class="page-header">
+          <div>
+            <h1 id="tables-title" class="page-title">Mesas</h1>
+            <p class="page-subtitle">Administración de mesas de juego por ronda</p>
+          </div>
+          <div class="page-header__actions">
+            <button class="btn btn--primary" id="btn-new-table">+ Nueva Mesa</button>
+          </div>
+        </div>
+ 
+        <!-- Filtros -->
+        <div class="filters-bar">
+          <div class="filter-group">
+            <label for="filter-table-round" class="filter-label">Ronda:</label>
+            <select id="filter-table-round" class="select">
+              <option value="">Seleccionar ronda...</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="filter-table-status" class="filter-label">Estado:</label>
+            <select id="filter-table-status" class="select">
+              <option value="">Todos</option>
+              <option value="Pending">Pendiente</option>
+              <option value="InPlay">En Juego</option>
+              <option value="Completed">Completada</option>
+              <option value="Cancelled">Cancelada</option>
+            </select>
+          </div>
+          <button class="btn btn--secondary" id="btn-load-tables">Cargar</button>
+        </div>
+ 
+        <!-- Vista de tarjetas de mesas -->
+        <div class="tables-grid" id="tables-grid">
+          <p class="tables-grid__empty">Selecciona una ronda para ver las mesas.</p>
+        </div>
+ 
+        <!-- Vista de lista de mesas (alternativa) -->
+        <div class="card" id="tables-list-card" hidden>
+          <div class="card__header">
+            <h2 class="card__title">Lista de Mesas</h2>
+            <button class="btn btn--sm btn--secondary" id="btn-toggle-table-view" aria-pressed="false">Vista Lista</button>
+          </div>
+          <div class="card__body">
+            <table class="table" aria-label="Lista de mesas">
+              <thead>
+                <tr>
+                  <th scope="col">Mesa #</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Inicio</th>
+                  <th scope="col">Fin</th>
+                  <th scope="col">Bloqueo</th>
+                  <th scope="col">Fichas Rest.</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tables-body">
+                <tr>
+                  <td colspan="7" class="table__empty">Selecciona una ronda para ver las mesas.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+ 
+        <!-- MODAL: Nueva Mesa -->
+        <dialog class="modal" id="modal-table" aria-labelledby="modal-table-title">
+          <div class="modal__content modal__content--sm">
+            <div class="modal__header">
+              <h2 id="modal-table-title" class="modal__title">Nueva Mesa</h2>
+              <button class="btn btn--icon modal__close" aria-label="Cerrar modal">✕</button>
+            </div>
+            <form class="form" id="form-table" novalidate>
+              <div class="form__group">
+                <label for="table-round" class="form__label">Ronda <span aria-hidden="true">*</span></label>
+                <select id="table-round" name="roundId" class="select" required>
+                  <option value="">Seleccionar ronda...</option>
+                </select>
+                <span class="form__error" role="alert" id="err-table-round"></span>
+              </div>
+              <div class="form__group">
+                <label for="table-number" class="form__label">Número de Mesa <span aria-hidden="true">*</span></label>
+                <input type="number" id="table-number" name="tableNumber" class="input" min="1" max="200" required placeholder="Ej: 1" />
+                <span class="form__error" role="alert" id="err-table-number"></span>
+              </div>
+              <div class="modal__footer">
+                <button type="button" class="btn btn--secondary modal__cancel">Cancelar</button>
+                <button type="submit" class="btn btn--primary">Crear Mesa</button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+ 
+        <!-- MODAL: Actualizar Estado de Mesa -->
+        <dialog class="modal" id="modal-table-status" aria-labelledby="modal-table-status-title">
+          <div class="modal__content modal__content--sm">
+            <div class="modal__header">
+              <h2 id="modal-table-status-title" class="modal__title">Actualizar Mesa</h2>
+              <button class="btn btn--icon modal__close" aria-label="Cerrar modal">✕</button>
+            </div>
+            <form class="form" id="form-table-status" novalidate>
+              <input type="hidden" id="table-status-id" name="id" />
+              <div class="form__group">
+                <label for="table-new-status" class="form__label">Estado</label>
+                <select id="table-new-status" name="status" class="select" required>
+                  <option value="">Seleccionar...</option>
+                  <option value="InPlay">En Juego</option>
+                  <option value="Completed">Completada</option>
+                  <option value="Cancelled">Cancelada</option>
+                </select>
+              </div>
+              <div class="form__grid form__grid--2">
+                <div class="form__group">
+                  <label for="table-end-date" class="form__label">Fecha de Cierre</label>
+                  <input type="datetime-local" id="table-end-date" name="endDate" class="input" />
+                </div>
+                <div class="form__group">
+                  <label for="table-remaining-chips" class="form__label">Fichas Restantes</label>
+                  <input type="number" id="table-remaining-chips" name="remainingChips" class="input" min="0" max="500" />
+                </div>
+              </div>
+              <div class="form__group form__group--checkbox">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="table-won-block" name="wonBlock" class="checkbox" />
+                  <span>Ganado por bloqueo</span>
+                </label>
+              </div>
+              <div class="modal__footer">
+                <button type="button" class="btn btn--secondary modal__cancel">Cancelar</button>
+                <button type="submit" class="btn btn--primary">Actualizar</button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+ 
+        <!-- MODAL: Ver Resultados de Mesa -->
+        <dialog class="modal" id="modal-table-results" aria-labelledby="modal-table-results-title">
+          <div class="modal__content">
+            <div class="modal__header">
+              <h2 id="modal-table-results-title" class="modal__title">Resultados de Mesa</h2>
+              <button class="btn btn--icon modal__close" aria-label="Cerrar modal">✕</button>
+            </div>
+            <div id="table-results-body">
+              <!-- Se rellena dinámicamente -->
+            </div>
+            <div class="modal__footer">
+              <button type="button" class="btn btn--secondary modal__cancel">Cerrar</button>
+            </div>
+          </div>
+        </dialog>
+ 
+      </section>
+ 
+      <!-- =====================================================
+           SECCIÓN: RESULTADOS
+      ====================================================== -->
+      <section id="section-results" class="section" aria-labelledby="results-title" hidden>
+ 
+        <div class="page-header">
+          <div>
+            <h1 id="results-title" class="page-title">Resultados</h1>
+            <p class="page-subtitle">Registro y edición de resultados por partida</p>
+          </div>
+          <div class="page-header__actions">
+            <button class="btn btn--primary" id="btn-new-result">+ Registrar Resultado</button>
+          </div>
+        </div>
+ 
+        <!-- Filtros -->
+        <div class="filters-bar">
+          <div class="filter-group">
+            <label for="filter-result-table" class="filter-label">Mesa ID:</label>
+            <input type="number" id="filter-result-table" class="input input--sm" min="1" placeholder="ID de mesa" />
+          </div>
+          <div class="filter-group">
+            <label for="filter-result-player" class="filter-label">Jugador ID:</label>
+            <input type="number" id="filter-result-player" class="input input--sm" min="1" placeholder="ID de jugador" />
+          </div>
+          <button class="btn btn--secondary" id="btn-filter-results">Filtrar</button>
+        </div>
+ 
+        <div class="card">
+          <div class="card__body">
+            <table class="table" aria-label="Lista de resultados">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Mesa</th>
+                  <th scope="col">Jugador</th>
+                  <th scope="col">Compañero</th>
+                  <th scope="col">Puntos</th>
+                  <th scope="col">Pts. Acum.</th>
+                  <th scope="col">Posición</th>
+                  <th scope="col">Ganador</th>
+                  <th scope="col">Bloqueo</th>
+                  <th scope="col">Elo</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="results-body">
+                <tr>
+                  <td colspan="11" class="table__empty">Usa los filtros para buscar resultados.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+ 
+        <!-- MODAL: Registrar Resultado -->
+        <dialog class="modal" id="modal-result" aria-labelledby="modal-result-title">
+          <div class="modal__content">
+            <div class="modal__header">
+              <h2 id="modal-result-title" class="modal__title">Registrar Resultado</h2>
+              <button class="btn btn--icon modal__close" aria-label="Cerrar modal">✕</button>
+            </div>
+            <form class="form" id="form-result" novalidate>
+              <input type="hidden" id="result-id" name="id" />
+ 
+              <div class="form__grid form__grid--2">
+                <div class="form__group">
+                  <label for="result-table" class="form__label">Mesa <span aria-hidden="true">*</span></label>
+                  <select id="result-table" name="tableId" class="select" required>
+                    <option value="">Seleccionar mesa...</option>
+                  </select>
+                  <span class="form__error" role="alert" id="err-result-table"></span>
+                </div>
+                <div class="form__group">
+                  <label for="result-player" class="form__label">Jugador <span aria-hidden="true">*</span></label>
+                  <select id="result-player" name="playerId" class="select" required>
+                    <option value="">Seleccionar jugador...</option>
+                  </select>
+                  <span class="form__error" role="alert" id="err-result-player"></span>
+                </div>
+              </div>
+ 
+              <div class="form__group">
+                <label for="result-playmate" class="form__label">Compañero (Dobles)</label>
+                <select id="result-playmate" name="playmateId" class="select">
+                  <option value="">Sin compañero (Singles)</option>
+                </select>
+              </div>
+ 
+              <div class="form__grid form__grid--3">
+                <div class="form__group">
+                  <label for="result-point" class="form__label">Puntos</label>
+                  <input type="number" id="result-point" name="point" class="input" min="0" value="0" />
+                </div>
+                <div class="form__group">
+                  <label for="result-points-accum" class="form__label">Puntos Acumulados</label>
+                  <input type="number" id="result-points-accum" name="pointsAccumulated" class="input" min="0" value="0" />
+                </div>
+                <div class="form__group">
+                  <label for="result-position" class="form__label">Posición</label>
+                  <select id="result-position" name="position" class="select">
+                    <option value="1">1° Lugar</option>
+                    <option value="2" selected>2° Lugar</option>
+                  </select>
+                </div>
+              </div>
+ 
+              <div class="form__grid form__grid--2">
+                <div class="form__group">
+                  <label for="result-elo" class="form__label">Variación Elo</label>
+                  <input type="number" id="result-elo" name="elo" class="input" value="0" />
+                </div>
+                <div class="form__group">
+                  <label for="result-chips" class="form__label">Fichas Restantes</label>
+                  <input type="number" id="result-chips" name="remainingChips" class="input" min="0" max="255" placeholder="Opcional" />
+                </div>
+              </div>
+ 
+              <div class="form__row form__row--checkboxes">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="result-is-winner" name="isWinner" class="checkbox" />
+                  <span>Es Ganador</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" id="result-won-block" name="wonBlock" class="checkbox" />
+                  <span>Ganó por Bloqueo</span>
+                </label>
+              </div>
+ 
+              <div class="modal__footer">
+                <button type="button" class="btn btn--secondary modal__cancel">Cancelar</button>
+                <button type="submit" class="btn btn--primary">Guardar Resultado</button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+ 
+        <!-- MODAL: Editar Resultado -->
+        <dialog class="modal" id="modal-result-edit" aria-labelledby="modal-result-edit-title">
+          <div class="modal__content">
+            <div class="modal__header">
+              <h2 id="modal-result-edit-title" class="modal__title">Editar Resultado</h2>
+              <button class="btn btn--icon modal__close" aria-label="Cerrar modal">✕</button>
+            </div>
+            <form class="form" id="form-result-edit" novalidate>
+              <input type="hidden" id="result-edit-id" name="id" />
+              <div class="form__grid form__grid--3">
+                <div class="form__group">
+                  <label for="result-edit-point" class="form__label">Puntos</label>
+                  <input type="number" id="result-edit-point" name="point" class="input" min="0" />
+                </div>
+                <div class="form__group">
+                  <label for="result-edit-points-accum" class="form__label">Pts. Acumulados</label>
+                  <input type="number" id="result-edit-points-accum" name="pointsAccumulated" class="input" min="0" />
+                </div>
+                <div class="form__group">
+                  <label for="result-edit-elo" class="form__label">Variación Elo</label>
+                  <input type="number" id="result-edit-elo" name="elo" class="input" />
+                </div>
+              </div>
+              <div class="form__grid form__grid--2">
+                <div class="form__group">
+                  <label for="result-edit-position" class="form__label">Posición</label>
+                  <select id="result-edit-position" name="position" class="select">
+                    <option value="1">1° Lugar</option>
+                    <option value="2">2° Lugar</option>
+                  </select>
+                </div>
+                <div class="form__group">
+                  <label for="result-edit-chips" class="form__label">Fichas Restantes</label>
+                  <input type="number" id="result-edit-chips" name="remainingChips" class="input" min="0" max="255" />
+                </div>
+              </div>
+              <div class="form__row form__row--checkboxes">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="result-edit-is-winner" name="isWinner" class="checkbox" />
+                  <span>Es Ganador</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" id="result-edit-won-block" name="wonBlock" class="checkbox" />
+                  <span>Ganó por Bloqueo</span>
+                </label>
+              </div>
+              <div class="modal__footer">
+                <button type="button" class="btn btn--secondary modal__cancel">Cancelar</button>
+                <button type="submit" class="btn btn--primary">Actualizar</button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+ 
+      </section>
+ 
+      <!-- =====================================================
+           SECCIÓN: CLASIFICACIÓN
+      ====================================================== -->
+      <section id="section-classification" class="section" aria-labelledby="classification-title" hidden>
+ 
+        <div class="page-header">
+          <div>
+            <h1 id="classification-title" class="page-title">Clasificación</h1>
+            <p class="page-subtitle">Rankings y standings del torneo</p>
+          </div>
+          <div class="page-header__actions">
+            <button class="btn btn--primary" id="btn-upsert-classification">+ Actualizar Clasificación</button>
+          </div>
+        </div>
+ 
+        <!-- Filtros -->
+        <div class="filters-bar">
+          <div class="filter-group">
+            <label for="filter-class-tournament" class="filter-label">Torneo:</label>
+            <select id="filter-class-tournament" class="select">
+              <option value="">Seleccionar torneo...</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="filter-class-type" class="filter-label">Tipo:</label>
+            <select id="filter-class-type" class="select">
+              <option value="all">Clasificación General</option>
+              <option value="final">Standings Finales</option>
+              <option value="top">Top N</option>
+            </select>
+          </div>
+          <div class="filter-group" id="filter-topn-group" hidden>
+            <label for="filter-class-topn" class="filter-label">N:</label>
+            <input type="number" id="filter-class-topn" class="input input--sm" min="1" max="100" value="10" />
+          </div>
+          <button class="btn btn--secondary" id="btn-load-classification">Cargar</button>
+        </div>
+ 
+        <!-- Podio top 3 -->
+        <div class="podium" id="podium" hidden aria-label="Podio top 3">
+          <div class="podium__place podium__place--2" id="podium-2nd">
+            <div class="podium__avatar" aria-hidden="true">—</div>
+            <div class="podium__name">—</div>
+            <div class="podium__medal">🥈</div>
+            <div class="podium__block">2</div>
+          </div>
+          <div class="podium__place podium__place--1" id="podium-1st">
+            <div class="podium__avatar" aria-hidden="true">—</div>
+            <div class="podium__name">—</div>
+            <div class="podium__medal">🥇</div>
+            <div class="podium__block">1</div>
+          </div>
+          <div class="podium__place podium__place--3" id="podium-3rd">
+            <div class="podium__avatar" aria-hidden="true">—</div>
+            <div class="podium__name">—</div>
+            <div class="podium__medal">🥉</div>
+            <div class="podium__block">3</div>
+          </div>
+        </div>
+ 
+        <!-- Tabla de clasificación -->
+        <div class="card">
+          <div class="card__body">
+            <table class="table table--classification" aria-label="Tabla de clasificación">
+              <thead>
+                <tr>
+                  <th scope="col">Pos.</th>
+                  <th scope="col">Jugador</th>
+                  <th scope="col">Victorias</th>
+                  <th scope="col">Derrotas</th>
+                  <th scope="col">Total</th>
+                  <th scope="col">Win Rate</th>
+                  <th scope="col">Pts. Favor</th>
+                  <th scope="col">Pts. Contra</th>
+                  <th scope="col">Diferencia</th>
+                  <th scope="col">% Total</th>
+                  <th scope="col">Última Ronda</th>
+                  <th scope="col">Final</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="classification-body">
+                <tr>
+                  <td colspan="13" class="table__empty">Selecciona un torneo y carga la clasificación.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+ 
+        <!-- MODAL: Upsert Clasificación -->
+        <dialog class="modal" id="modal-classification" aria-labelledby="modal-classification-title">
+          <div class="modal__content">
+            <div class="modal__header">
+              <h2 id="modal-classification-title" class="modal__title">Actualizar Clasificación</h2>
+              <button class="btn btn--icon modal__close" aria-label="Cerrar modal">✕</button>
+            </div>
+            <form class="form" id="form-classification" novalidate>
+              <div class="form__grid form__grid--2">
+                <div class="form__group">
+                  <label for="class-tournament" class="form__label">Torneo <span aria-hidden="true">*</span></label>
+                  <select id="class-tournament" name="tournamentId" class="select" required>
+                    <option value="">Seleccionar...</option>
+                  </select>
+                  <span class="form__error" role="alert" id="err-class-tournament"></span>
+                </div>
+                <div class="form__group">
+                  <label for="class-player" class="form__label">Jugador <span aria-hidden="true">*</span></label>
+                  <select id="class-player" name="playerId" class="select" required>
+                    <option value="">Seleccionar...</option>
+                  </select>
+                  <span class="form__error" role="alert" id="err-class-player"></span>
+                </div>
+              </div>
+ 
+              <div class="form__grid form__grid--3">
+                <div class="form__group">
+                  <label for="class-position" class="form__label">Posición</label>
+                  <input type="number" id="class-position" name="position" class="input" min="1" value="1" />
+                </div>
+                <div class="form__group">
+                  <label for="class-win-game" class="form__label">Victorias</label>
+                  <input type="number" id="class-win-game" name="winGame" class="input" min="0" value="0" />
+                </div>
+                <div class="form__group">
+                  <label for="class-lost-game" class="form__label">Derrotas</label>
+                  <input type="number" id="class-lost-game" name="lostGame" class="input" min="0" value="0" />
+                </div>
+              </div>
+ 
+              <div class="form__grid form__grid--3">
+                <div class="form__group">
+                  <label for="class-favor-points" class="form__label">Puntos a Favor</label>
+                  <input type="number" id="class-favor-points" name="favorPoints" class="input" min="0" value="0" />
+                </div>
+                <div class="form__group">
+                  <label for="class-against-points" class="form__label">Puntos en Contra</label>
+                  <input type="number" id="class-against-points" name="pointsAgainst" class="input" min="0" value="0" />
+                </div>
+                <div class="form__group">
+                  <label for="class-percentage" class="form__label">% Total (0-100)</label>
+                  <input type="number" id="class-percentage" name="totalPercentage" class="input" min="0" max="100" value="0" />
+                </div>
+              </div>
+ 
+              <div class="form__grid form__grid--2">
+                <div class="form__group">
+                  <label for="class-last-round" class="form__label">Última Ronda Calculada</label>
+                  <input type="number" id="class-last-round" name="lastRoundCalculated" class="input" min="0" value="0" />
+                </div>
+                <div class="form__group form__group--checkbox">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="class-is-final" name="isFinal" class="checkbox" />
+                    <span>Clasificación Final</span>
+                  </label>
+                </div>
+              </div>
+ 
+              <div class="modal__footer">
+                <button type="button" class="btn btn--secondary modal__cancel">Cancelar</button>
+                <button type="submit" class="btn btn--primary">Guardar</button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+ 
+      </section>
+ 
+    </main>
+  </div>
+ 
+  <!-- ========================================================
+       TOAST / NOTIFICACIONES
+  ========================================================= -->
+  <div class="toast-container" id="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
+ 
+  <!-- ========================================================
+       MODAL DE CONFIRMACIÓN GLOBAL
+  ========================================================= -->
+  <dialog class="modal modal--confirm" id="modal-confirm" aria-labelledby="modal-confirm-title">
+    <div class="modal__content modal__content--sm">
+      <div class="modal__header">
+        <h2 id="modal-confirm-title" class="modal__title">¿Confirmar acción?</h2>
+      </div>
+      <div class="modal__body">
+        <p id="modal-confirm-message">¿Estás seguro de que deseas continuar? Esta acción no se puede deshacer.</p>
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--secondary" id="confirm-cancel">Cancelar</button>
+        <button type="button" class="btn btn--danger" id="confirm-ok">Confirmar</button>
+      </div>
+    </div>
+  </dialog>
+ 
+  <script src="DominoPro2.js"></script>
+</body>
+</html>
+ 

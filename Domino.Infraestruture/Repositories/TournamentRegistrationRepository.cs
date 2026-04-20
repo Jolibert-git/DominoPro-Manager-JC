@@ -8,7 +8,10 @@ namespace Domino.Infraestructure.Repositories
 {
     public class TournamentRegistrationRepository : GenericRepository<TournamentRegistration>, ITournamentRegistrationRepository
     {
-        public TournamentRegistrationRepository(ApplicationDbContext context) : base(context) { }
+        public TournamentRegistrationRepository(ApplicationDbContext context) 
+            : base(context) 
+        {
+        }
 
         public async Task<TournamentRegistration?> GetByPlayerAndTournamentAsync(int playerId, int tournamentId)
         {
@@ -17,8 +20,7 @@ namespace Domino.Infraestructure.Repositories
 
         public async Task<List<TournamentRegistration>> GetByTournamentAsync(int tournamentId)
         {
-            return await _dbSet.AsNoTracking()
-                               .Include(r => r.Player)
+            return await _dbSet.Include(r => r.Player)
                                .Where(r => r.TournamentId == tournamentId)
                                .OrderBy(r => r.DorsalNumber)
                                .ToListAsync();
@@ -26,8 +28,7 @@ namespace Domino.Infraestructure.Repositories
 
         public async Task<List<TournamentRegistration>> GetByPlayerAsync(int playerId)
         {
-            return await _dbSet.AsNoTracking()
-                               .Include(r => r.Tournament)
+            return await _dbSet.Include(r => r.Tournament)
                                .Where(r => r.PlayerId == playerId)
                                .OrderByDescending(r => r.RegistrationDate)
                                .ToListAsync();
@@ -43,8 +44,7 @@ namespace Domino.Infraestructure.Repositories
 
         public async Task<List<TournamentRegistration>> GetConfirmedAsync(int tournamentId)
         {
-            return await _dbSet.AsNoTracking()
-                               .Include(r => r.Player)
+            return await _dbSet.Include(r => r.Player)
                                .Where(r => r.TournamentId == tournamentId &&
                                            r.Status == RegistrationStatus.Confirmed)
                                .ToListAsync();

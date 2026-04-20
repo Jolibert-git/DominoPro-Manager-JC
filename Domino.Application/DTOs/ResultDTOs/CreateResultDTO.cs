@@ -5,10 +5,10 @@ namespace Domino.Application.DTOs.ResultDTOs
 {
     public class CreateResultDTO
     {
-        [Required(ErrorMessage = "Table ID is required")]
+        [Required(ErrorMessage = "You need insert Table Id")]
         public int TableId { get; set; }
 
-        [Required(ErrorMessage = "Player ID is required")]
+        [Required(ErrorMessage = "You need insert Player Id")]
         public int PlayerId { get; set; }
 
         public int? PlaymateId { get; set; }

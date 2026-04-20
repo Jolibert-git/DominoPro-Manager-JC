@@ -58,19 +58,19 @@ namespace Domino.Application.Services
             return ApiResponse<TournamentDetailDTO>.SuccessResponse(_mapper.Map<TournamentDetailDTO>(tournament));
         }
 
-        public async Task<ApiResponse<TournamentDTO>> CreateAsync(CreateTournamentDTO request)
+        public async Task<ApiResponse<TournamentDTO>> CreateAsync(CreateTournamentDTO createtournamentDTO)
         {
-            if (request.EndDate.HasValue && request.EndDate <= request.StartDate)
+            if (createtournamentDTO.EndDate.HasValue && createtournamentDTO.EndDate <= createtournamentDTO.StartDate)
             {
                 return ApiResponse<TournamentDTO>.ErrorResponse("End date must be after start date", 400);
             }
 
-            if (request.MaxPlayers.HasValue && request.MaxPlayers < request.MinPlayers)
+            if (createtournamentDTO.MaxPlayers.HasValue && createtournamentDTO.MaxPlayers < createtournamentDTO.MinPlayers)
             {
                 return ApiResponse<TournamentDTO>.ErrorResponse("Max players cannot be less than min players", 400);
             }
 
-            var tournament = _mapper.Map<Tournament>(request);
+            var tournament = _mapper.Map<Tournament>(createtournamentDTO);
 
             await _work.Tournaments.AddAsync(tournament);
             await _work.CompleteAsync();
@@ -78,7 +78,7 @@ namespace Domino.Application.Services
             return ApiResponse<TournamentDTO>.CreatedResponse(_mapper.Map<TournamentDTO>(tournament));
         }
 
-        public async Task<ApiResponse<TournamentDTO>> UpdateAsync(int id, UpdateTournamentDTO request)
+        public async Task<ApiResponse<TournamentDTO>> UpdateAsync(int id, UpdateTournamentDTO updateTournamentDTO)
         {
             var tournament = await _work.Tournaments.GetByIdAsync(id);
 
@@ -93,13 +93,13 @@ namespace Domino.Application.Services
                 return ApiResponse<TournamentDTO>.ErrorResponse("Cannot update a finalized or canceled tournament", 409);
             }
 
-            if (request.EndDate.HasValue &&
-                request.EndDate <= (request.StartDate ?? tournament.StartDate))
+            if (updateTournamentDTO.EndDate.HasValue &&
+                updateTournamentDTO.EndDate <= (updateTournamentDTO.StartDate ?? tournament.StartDate))
             {
                 return ApiResponse<TournamentDTO>.ErrorResponse("End date must be after start date", 400);
             }
 
-            _mapper.Map(request, tournament);
+            _mapper.Map(updateTournamentDTO, tournament);
 
             _work.Tournaments.Update(tournament);
             await _work.CompleteAsync();
@@ -108,7 +108,7 @@ namespace Domino.Application.Services
         }
 
 
-        public async Task<ApiResponse<TournamentDTO>> UpdateStatusAsync(int id, UpdateTournamentStatusDTO request)
+        public async Task<ApiResponse<TournamentDTO>> UpdateStatusAsync(int id, UpdateTournamentStatusDTO updateTournamentStatusDTO)
         {
             var tournament = await _work.Tournaments.GetByIdAsync(id);
 
@@ -117,7 +117,7 @@ namespace Domino.Application.Services
                 return ApiResponse<TournamentDTO>.ErrorResponse($"Tournament with ID  was not found", 404);
             }
 
-            bool validTransition = (tournament.Status, request.Status) switch
+            bool validTransition = (tournament.Status, updateTournamentStatusDTO.Status) switch
             {
                 (TournamentStatus.Programmed, TournamentStatus.InCourse) => true,
                 (TournamentStatus.InCourse, TournamentStatus.Finalized) => true,
@@ -131,9 +131,9 @@ namespace Domino.Application.Services
                 return ApiResponse<TournamentDTO>.ErrorResponse($"Cannot transition ", 409);
             }
 
-            tournament.Status = request.Status;
+            tournament.Status = updateTournamentStatusDTO.Status;
 
-            if (request.Status == TournamentStatus.Finalized)
+            if (updateTournamentStatusDTO.Status == TournamentStatus.Finalized)
             {
                 tournament.EndDate = DateTime.UtcNow;
             }

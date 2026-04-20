@@ -68,9 +68,9 @@ namespace Domino.Application.Services
             return ApiResponse<TableDetailDTO>.SuccessResponse(_mapper.Map<TableDetailDTO>(table));
         }
 
-        public async Task<ApiResponse<TableDTO>> CreateAsync(CreateTableDTO request)
+        public async Task<ApiResponse<TableDTO>> CreateAsync(CreateTableDTO createTableDTO)
         {
-            var round = await _work.Rounds.GetByIdAsync(request.RoundId);
+            var round = await _work.Rounds.GetByIdAsync(createTableDTO.RoundId);
 
             if (round is null)
             {
@@ -82,7 +82,7 @@ namespace Domino.Application.Services
                 return ApiResponse<TableDTO>.ErrorResponse("Tables can only be created for rounds in 'Pending' or 'InPlay' status", 409);
             }
 
-            var table = _mapper.Map<Table>(request);
+            var table = _mapper.Map<Table>(createTableDTO);
 
             await _work.Tables.AddAsync(table);
             await _work.CompleteAsync();
@@ -90,7 +90,7 @@ namespace Domino.Application.Services
             return ApiResponse<TableDTO>.CreatedResponse(_mapper.Map<TableDTO>(table));
         }
 
-        public async Task<ApiResponse<TableDTO>> UpdateStatusAsync(int id, UpdateTableStatusDTO request)
+        public async Task<ApiResponse<TableDTO>> UpdateStatusAsync(int id, UpdateTableStatusDTO updateTableDto)
         {
             var table = await _work.Tables.GetByIdAsync(id);
 
@@ -99,7 +99,7 @@ namespace Domino.Application.Services
                 return ApiResponse<TableDTO>.ErrorResponse($"Table with ID  was not found", 404);
             }
 
-            bool validTransition = (table.Status, request.Status) switch
+            bool validTransition = (table.Status, updateTableDto.Status) switch
             {
                 (GameStatus.Pending, GameStatus.InPlay) => true,
                 (GameStatus.InPlay, GameStatus.Completed) => true,
@@ -110,28 +110,28 @@ namespace Domino.Application.Services
 
             if (!validTransition)
             {
-                return ApiResponse<TableDTO>.ErrorResponse($"Cannot transition from  to '{request.Status}'", 409);
+                return ApiResponse<TableDTO>.ErrorResponse($"Cannot transition from  to '{updateTableDto.Status}'", 409);
             }
 
-            table.Status = request.Status;
+            table.Status = updateTableDto.Status;
 
-            if (request.Status == GameStatus.InPlay && table.StartDate is null)
+            if (updateTableDto.Status == GameStatus.InPlay && table.StartDate is null)
             {
                 table.StartDate = DateTime.UtcNow;
             }
 
-            if (request.Status == GameStatus.Completed)
+            if (updateTableDto.Status == GameStatus.Completed)
             {
-                table.EndDate = request.EndDate ?? DateTime.UtcNow;
+                table.EndDate = updateTableDto.EndDate ?? DateTime.UtcNow;
 
-                if (request.WonBlock.HasValue)
+                if (updateTableDto.WonBlock.HasValue)
                 {
-                    table.WonBlock = request.WonBlock.Value;
+                    table.WonBlock = updateTableDto.WonBlock.Value;
                 }
 
-                if (request.RemainingChips.HasValue)
+                if (updateTableDto.RemainingChips.HasValue)
                 {
-                    table.RemainingChips = request.RemainingChips;
+                    table.RemainingChips = updateTableDto.RemainingChips;
                 }
             }
 

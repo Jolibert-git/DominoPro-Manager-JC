@@ -42,14 +42,15 @@ namespace Domino.Infraestructure.Repositories
         {
             return await _context.SaveChangesAsync();
         }
-            
+
 
         public async Task BeginTransactionAsync()
         {
             if (_transaction is not null)
             {
-                throw new InvalidOperationException("Ya hay una transacción activa.");
+                throw new InvalidOperationException("There aren't acive transation");
             }
+
             _transaction = await _context.Database.BeginTransactionAsync();
         }
 
@@ -57,31 +58,23 @@ namespace Domino.Infraestructure.Repositories
         {
             if (_transaction is null)
             {
-                throw new InvalidOperationException("No hay transacción activa para confirmar.");
+                throw new InvalidOperationException("There aren't comfi transation");
             }
-            await _context.SaveChangesAsync();
-            await _transaction.CommitAsync();
-            await _transaction.DisposeAsync();
-            _transaction = null;
+            
+            await _context.Database.CommitTransactionAsync();
         }
 
         public async Task RollbackAsync()
         {
-            if (_transaction is null) return;
-            await _transaction.RollbackAsync();
-            await _transaction.DisposeAsync();
-            _transaction = null;
+            if (_transaction is null)
+            {
+                return;
+            }
+            await _context.Database.RollbackTransactionAsync();
         }
 
-        public async ValueTask DisposeAsync()
-        {
-            if (_transaction is not null)
-            {
-                await _transaction.DisposeAsync();
-            }
-            await _context.DisposeAsync();
-        }
-}
+        
+    }
 }
     
 

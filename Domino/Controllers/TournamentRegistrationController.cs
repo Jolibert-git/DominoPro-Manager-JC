@@ -12,7 +12,9 @@ namespace Domino.API.Controllers
         private readonly ITournamentRegistrationService _service;
 
         public TournamentRegistrationController(ITournamentRegistrationService service)
-            => _service = service;
+        { 
+            _service = service; 
+        }
 
 
         [HttpGet("Tournament/{tournamentId:int}")]
@@ -41,33 +43,35 @@ namespace Domino.API.Controllers
         }
 
 
-
         [HttpPost]
-        public async Task<IActionResult> Register( CreateTournamentRegistrationDTO request)
+        public async Task<IActionResult> Register( CreateTournamentRegistrationDTO createTournamentRegistrationDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var response = await _service.RegisterAsync(request);
+            var response = await _service.RegisterAsync(createTournamentRegistrationDTO);
+
             return StatusCode(response.StatusCode, response);
         }
 
 
 
         [HttpPatch("{id:int}/Status")]
-        public async Task<IActionResult> UpdateStatus(int id,  UpdateTournamentRegistrationStatusDTO request)
+        public async Task<IActionResult> UpdateStatus(int id,  UpdateTournamentRegistrationStatusDTO updateTournamentRegistrationStatusDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var response = await _service.UpdateStatusAsync(id, request);
+            var response = await _service.UpdateStatusAsync(id, updateTournamentRegistrationStatusDTO);
 
             return StatusCode(response.StatusCode, response);
         }
+
+
 
         [HttpPatch("{id:int}/Withdraw")]
         public async Task<IActionResult> Withdraw(int id)

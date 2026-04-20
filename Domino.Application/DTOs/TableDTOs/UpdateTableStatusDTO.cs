@@ -7,14 +7,14 @@ namespace Domino.Application.DTOs.TableDTOs
     public class UpdateTableStatusDTO
     {
         [Required]
-        [EnumDataType(typeof(GameStatus))]
+        [EnumDataType(typeof(GameStatus), ErrorMessage = "Sattus not validated")]
         public GameStatus Status { get; set; }
 
         public DateTime? EndDate { get; set; }
 
         public bool? WonBlock { get; set; }
 
-        [Range(0, 500)]
+        [Range(0, 500, ErrorMessage = "Remaining chips sum is invalid")]
         public int? RemainingChips { get; set; }
     }
 }

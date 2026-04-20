@@ -8,12 +8,14 @@ namespace Domino.Infraestructure.Repositories
 {
     public class RoundRepository : GenericRepository<Round>, IRoundRepository
     {
-        public RoundRepository(ApplicationDbContext context) : base(context) { }
+        public RoundRepository(ApplicationDbContext context) 
+            : base(context)
+        {
+        }
 
         public async Task<List<Round>> GetByTournamentAsync(int tournamentId)
         {
-            return await _dbSet.AsNoTracking()
-                               .Where(r => r.TournamentId == tournamentId)
+            return await _dbSet.Where(r => r.TournamentId == tournamentId)
                                .OrderBy(r => r.RoundNumber)
                                .ToListAsync();
         }
@@ -22,8 +24,8 @@ namespace Domino.Infraestructure.Repositories
         {
             return await _dbSet
                     .Include(r => r.Tables)
-                        .ThenInclude(m => m.Results)
-                            .ThenInclude(res => res.Player)
+                    .ThenInclude(m => m.Results)
+                    .ThenInclude(res => res.Player)
                     .FirstOrDefaultAsync(r => r.Id == roundId);
         }
 
@@ -39,8 +41,7 @@ namespace Domino.Infraestructure.Repositories
 
         public async Task<List<Round>> GetByStatusAsync(int tournamentId, RoundStatus status)
         {
-            return await _dbSet.AsNoTracking()
-                               .Where(r => r.TournamentId == tournamentId && r.Status == status)
+            return await _dbSet.Where(r => r.TournamentId == tournamentId && r.Status == status)
                                .OrderBy(r => r.RoundNumber)
                                .ToListAsync();
         }
