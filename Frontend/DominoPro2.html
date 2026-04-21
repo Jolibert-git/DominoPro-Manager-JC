@@ -562,127 +562,182 @@
       <!-- =====================================================
            SECCIÓN: INSCRIPCIONES
       ====================================================== -->
-      <section id="section-registrations" class="section" aria-labelledby="registrations-title" hidden>
- 
-        <div class="page-header">
-          <div>
-            <h1 id="registrations-title" class="page-title">Inscripciones</h1>
-            <p class="page-subtitle">Gestión de inscripciones por torneo</p>
+
+      
+<section id="section-registrations" class="section" aria-labelledby="registrations-title" hidden>
+
+  <div class="page-header">
+    <div>
+      <h1 id="registrations-title" class="page-title">Inscripciones</h1>
+      <p class="page-subtitle">Gestión de inscripciones por torneo</p>
+    </div>
+    <div class="page-header__actions">
+      <button class="btn btn--primary" id="btn-new-registration">+ Nueva Inscripción</button>
+    </div>
+  </div>
+
+  <!-- Selector de torneo -->
+  <div class="filters-bar">
+    <div class="filter-group">
+      <label for="filter-registration-tournament" class="filter-label">Torneo:</label>
+      <select id="filter-registration-tournament" class="select">
+        <option value="">Seleccionar torneo...</option>
+      </select>
+    </div>
+    <button class="btn btn--secondary" id="btn-load-registrations">Cargar</button>
+  </div>
+
+  <div class="card">
+    <div class="card__body">
+      <table class="table" aria-label="Lista de inscripciones">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Jugador</th>
+            <th scope="col">Dorsal</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Pago</th>
+            <th scope="col">Fecha Inscripción</th>
+            <th scope="col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="registrations-body">
+          <tr>
+            <td colspan="7" class="table__empty">Selecciona un torneo para ver las inscripciones.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ================================================
+       MODAL: Nueva Inscripción
+       NOTA: El backend solo permite inscribir jugadores
+       en torneos con estado "Programmed". El status
+       inicial siempre será Pending. Cámbialo después
+       con el botón Actualizar en la tabla.
+  ================================================ -->
+  <dialog class="modal" id="modal-registration" aria-labelledby="modal-registration-title">
+    <div class="modal__content modal__content--sm">
+      <div class="modal__header">
+        <h2 id="modal-registration-title" class="modal__title">Nueva Inscripción</h2>
+        <button class="btn btn--icon modal__close" aria-label="Cerrar modal">✕</button>
+      </div>
+      <form class="form" id="form-registration" novalidate>
+
+        <div class="form__group">
+          <label for="reg-tournament" class="form__label">
+            Torneo <span aria-hidden="true">*</span>
+          </label>
+          <select id="reg-tournament" name="tournamentId" class="select" required>
+            <option value="">Seleccionar torneo...</option>
+          </select>
+          <span class="form__error" role="alert" id="err-reg-tournament"></span>
+          <!-- El torneo debe estar en estado Programmed para poder inscribir -->
+          <small style="color:var(--text-muted);font-size:0.75rem;">
+            ⚠️ Solo torneos en estado <strong>Programado</strong> aceptan inscripciones.
+          </small>
+        </div>
+
+        <div class="form__group">
+          <label for="reg-player" class="form__label">
+            Jugador <span aria-hidden="true">*</span>
+          </label>
+          <select id="reg-player" name="playerId" class="select" required>
+            <option value="">Seleccionar jugador...</option>
+          </select>
+          <span class="form__error" role="alert" id="err-reg-player"></span>
+        </div>
+
+        <div class="form__grid form__grid--2">
+          <div class="form__group">
+            <label for="reg-dorsal" class="form__label">Número Dorsal</label>
+            <input
+              type="number"
+              id="reg-dorsal"
+              name="dorsalNumber"
+              class="input"
+              min="1"
+              max="1000"
+              placeholder="Opcional"
+            />
           </div>
-          <div class="page-header__actions">
-            <button class="btn btn--primary" id="btn-new-registration">+ Nueva Inscripción</button>
+          <div class="form__group form__group--checkbox">
+            <label class="checkbox-label">
+              <input type="checkbox" id="reg-payment" name="paymentFee" class="checkbox" />
+              <span>Pago realizado</span>
+            </label>
           </div>
         </div>
- 
-        <!-- Selector de torneo -->
-        <div class="filters-bar">
-          <div class="filter-group">
-            <label for="filter-registration-tournament" class="filter-label">Torneo:</label>
-            <select id="filter-registration-tournament" class="select">
-              <option value="">Seleccionar torneo...</option>
-            </select>
-          </div>
-          <button class="btn btn--secondary" id="btn-load-registrations">Cargar</button>
+
+        <!-- Info: el status inicial siempre es Pending por diseño del backend -->
+        <div style="
+          padding: var(--space-3) var(--space-4);
+          background: rgba(244,169,0,0.08);
+          border: 1px solid rgba(244,169,0,0.25);
+          border-radius: var(--radius-md);
+          font-size: 0.8rem;
+          color: var(--text-secondary);
+        ">
+          📋 El jugador quedará en estado <strong>Pendiente</strong> al inscribirse.
+          Puedes cambiarlo a <strong>Confirmado</strong> usando el botón
+          <em>Actualizar</em> en la tabla de inscripciones.
         </div>
- 
-        <div class="card">
-          <div class="card__body">
-            <table class="table" aria-label="Lista de inscripciones">
-              <thead>
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Jugador</th>
-                  <th scope="col">Dorsal</th>
-                  <th scope="col">Estado</th>
-                  <th scope="col">Pago</th>
-                  <th scope="col">Fecha Inscripción</th>
-                  <th scope="col">Acciones</th>
-                </tr>
-              </thead>
-              <tbody id="registrations-body">
-                <tr>
-                  <td colspan="7" class="table__empty">Selecciona un torneo para ver las inscripciones.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+
+        <div class="modal__footer">
+          <button type="button" class="btn btn--secondary modal__cancel">Cancelar</button>
+          <button type="submit" class="btn btn--primary">Inscribir</button>
         </div>
- 
-        <!-- MODAL: Nueva Inscripción -->
-        <dialog class="modal" id="modal-registration" aria-labelledby="modal-registration-title">
-          <div class="modal__content modal__content--sm">
-            <div class="modal__header">
-              <h2 id="modal-registration-title" class="modal__title">Nueva Inscripción</h2>
-              <button class="btn btn--icon modal__close" aria-label="Cerrar modal">✕</button>
-            </div>
-            <form class="form" id="form-registration" novalidate>
-              <div class="form__group">
-                <label for="reg-tournament" class="form__label">Torneo <span aria-hidden="true">*</span></label>
-                <select id="reg-tournament" name="tournamentId" class="select" required>
-                  <option value="">Seleccionar torneo...</option>
-                </select>
-                <span class="form__error" role="alert" id="err-reg-tournament"></span>
-              </div>
-              <div class="form__group">
-                <label for="reg-player" class="form__label">Jugador <span aria-hidden="true">*</span></label>
-                <select id="reg-player" name="playerId" class="select" required>
-                  <option value="">Seleccionar jugador...</option>
-                </select>
-                <span class="form__error" role="alert" id="err-reg-player"></span>
-              </div>
-              <div class="form__grid form__grid--2">
-                <div class="form__group">
-                  <label for="reg-dorsal" class="form__label">Número Dorsal</label>
-                  <input type="number" id="reg-dorsal" name="dorsalNumber" class="input" min="1" max="1000" placeholder="Opcional" />
-                </div>
-                <div class="form__group form__group--checkbox">
-                  <label class="checkbox-label">
-                    <input type="checkbox" id="reg-payment" name="paymentFee" class="checkbox" />
-                    <span>Pago realizado</span>
-                  </label>
-                </div>
-              </div>
-              <div class="modal__footer">
-                <button type="button" class="btn btn--secondary modal__cancel">Cancelar</button>
-                <button type="submit" class="btn btn--primary">Inscribir</button>
-              </div>
-            </form>
-          </div>
-        </dialog>
- 
-        <!-- MODAL: Actualizar Estado de Inscripción -->
-        <dialog class="modal" id="modal-registration-status" aria-labelledby="modal-reg-status-title">
-          <div class="modal__content modal__content--sm">
-            <div class="modal__header">
-              <h2 id="modal-reg-status-title" class="modal__title">Actualizar Inscripción</h2>
-              <button class="btn btn--icon modal__close" aria-label="Cerrar modal">✕</button>
-            </div>
-            <form class="form" id="form-registration-status" novalidate>
-              <input type="hidden" id="reg-status-id" name="id" />
-              <div class="form__group">
-                <label for="reg-new-status" class="form__label">Estado</label>
-                <select id="reg-new-status" name="status" class="select" required>
-                  <option value="Pending">Pendiente</option>
-                  <option value="Confirmed">Confirmado</option>
-                  <option value="Withdrawn">Retirado</option>
-                  <option value="Disqualified">Descalificado</option>
-                </select>
-              </div>
-              <div class="form__group form__group--checkbox">
-                <label class="checkbox-label">
-                  <input type="checkbox" id="reg-status-payment" name="paymentFee" class="checkbox" />
-                  <span>Pago realizado</span>
-                </label>
-              </div>
-              <div class="modal__footer">
-                <button type="button" class="btn btn--secondary modal__cancel">Cancelar</button>
-                <button type="submit" class="btn btn--primary">Actualizar</button>
-              </div>
-            </form>
-          </div>
-        </dialog>
- 
-      </section>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- ================================================
+       MODAL: Actualizar Estado de Inscripción
+       Los valores del select coinciden con el enum
+       RegistrationStatus del backend:
+         0 = Pending
+         1 = Confirmed
+         2 = Withdrawn
+         3 = Disqualified
+  ================================================ -->
+  <dialog class="modal" id="modal-registration-status" aria-labelledby="modal-reg-status-title">
+    <div class="modal__content modal__content--sm">
+      <div class="modal__header">
+        <h2 id="modal-reg-status-title" class="modal__title">Actualizar Inscripción</h2>
+        <button class="btn btn--icon modal__close" aria-label="Cerrar modal">✕</button>
+      </div>
+      <form class="form" id="form-registration-status" novalidate>
+        <input type="hidden" id="reg-status-id" name="id" />
+
+        <div class="form__group">
+          <label for="reg-new-status" class="form__label">Estado</label>
+          <select id="reg-new-status" name="status" class="select" required>
+            <option value="0">Pendiente</option>
+            <option value="1">Confirmado</option>
+            <option value="2">Retirado</option>
+            <option value="3">Descalificado</option>
+          </select>
+        </div>
+
+        <div class="form__group form__group--checkbox">
+          <label class="checkbox-label">
+            <input type="checkbox" id="reg-status-payment" name="paymentFee" class="checkbox" />
+            <span>Pago realizado</span>
+          </label>
+        </div>
+
+        <div class="modal__footer">
+          <button type="button" class="btn btn--secondary modal__cancel">Cancelar</button>
+          <button type="submit" class="btn btn--primary">Actualizar</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+</section>
+
+      
  
       <!-- =====================================================
            SECCIÓN: RONDAS
@@ -796,8 +851,8 @@
                 <label for="round-new-status" class="form__label">Nuevo Estado</label>
                 <select id="round-new-status" name="status" class="select" required>
                   <option value="">Seleccionar...</option>
-                  <option value="InPlay">En Juego</option>
-                  <option value="Completed">Completada</option>
+                  <option value="1">En Juego</option>
+                  <option value="2">Completada</option>
                 </select>
               </div>
               <div class="form__group">
@@ -841,10 +896,10 @@
             <label for="filter-table-status" class="filter-label">Estado:</label>
             <select id="filter-table-status" class="select">
               <option value="">Todos</option>
-              <option value="Pending">Pendiente</option>
-              <option value="InPlay">En Juego</option>
-              <option value="Completed">Completada</option>
-              <option value="Cancelled">Cancelada</option>
+              <option value="0">Pendiente</option>
+              <option value="1">En Juego</option>
+              <option value="2">Completada</option>
+              <option value="3">Cancelada</option>
             </select>
           </div>
           <button class="btn btn--secondary" id="btn-load-tables">Cargar</button>
@@ -924,9 +979,9 @@
                 <label for="table-new-status" class="form__label">Estado</label>
                 <select id="table-new-status" name="status" class="select" required>
                   <option value="">Seleccionar...</option>
-                  <option value="InPlay">En Juego</option>
-                  <option value="Completed">Completada</option>
-                  <option value="Cancelled">Cancelada</option>
+                  <option value="1">En Juego</option>
+                  <option value="2">Completada</option>
+                  <option value="3">Cancelada</option>
                 </select>
               </div>
               <div class="form__grid form__grid--2">

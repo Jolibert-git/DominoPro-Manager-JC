@@ -825,11 +825,14 @@ const Players = {
 /* ============================================================
    INSCRIPCIONES  — FIX #3: carga automática al seleccionar torneo
    ============================================================ */
+   /* ============================================================
+   INSCRIPCIONES
+   ============================================================ */
 const Registrations = {
   async init() {
     await this.populateTournamentSelects();
   },
- 
+
   async populateTournamentSelects() {
     try {
       const [active, prog] = await Promise.allSettled([
@@ -841,13 +844,18 @@ const Registrations = {
         ...(prog.value?.data ?? []),
       ];
       const seen = new Set();
-      const unique = tournaments.filter(t => { if (seen.has(t.id)) return false; seen.add(t.id); return true; });
- 
+      const unique = tournaments.filter(t => {
+        if (seen.has(t.id)) return false;
+        seen.add(t.id);
+        return true;
+      });
+
       ['filter-registration-tournament', 'reg-tournament'].forEach(id => {
         const sel = document.getElementById(id);
         if (!sel) return;
         const current = sel.value;
-        sel.innerHTML = '<option value="">Seleccionar torneo...</option>' +
+        sel.innerHTML =
+          '<option value="">Seleccionar torneo...</option>' +
           unique.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
         sel.value = current;
       });
@@ -855,7 +863,7 @@ const Registrations = {
       Toast.error('Error al cargar torneos: ' + e.message);
     }
   },
- 
+
   async loadByTournament(tournamentId) {
     const tbody = document.getElementById('registrations-body');
     if (!tournamentId) {
@@ -866,7 +874,10 @@ const Registrations = {
     try {
       const res  = await api.get(`/TournamentRegistration/Tournament/${tournamentId}`);
       const list = res.data ?? [];
-      if (!list.length) { tbody.innerHTML = Render.empty(7, 'No hay inscripciones para este torneo.'); return; }
+      if (!list.length) {
+        tbody.innerHTML = Render.empty(7, 'No hay inscripciones para este torneo.');
+        return;
+      }
       tbody.innerHTML = list.map(r => `
         <tr>
           <td>${r.id}</td>
@@ -878,7 +889,7 @@ const Registrations = {
           <td>
             ${Render.actionBtns([
               { action: 'update-reg-status', id: r.id, label: 'Actualizar', icon: '🔄', style: 'secondary' },
-              { action: 'withdraw-reg',      id: r.id, label: 'Retirar',    icon: '🚪', style: 'danger' },
+              { action: 'withdraw-reg',      id: r.id, label: 'Retirar',    icon: '🚪', style: 'danger'     },
             ])}
           </td>
         </tr>
@@ -889,24 +900,26 @@ const Registrations = {
       Toast.error(e.message);
     }
   },
- 
+
   bindTableActions(tournamentId) {
     document.querySelectorAll('#registrations-body [data-action]').forEach(btn => {
       btn.addEventListener('click', () => {
         const id = parseInt(btn.dataset.id);
         switch (btn.dataset.action) {
-          case 'update-reg-status': this.openUpdateStatus(id);          break;
-          case 'withdraw-reg':      this.withdraw(id, tournamentId);    break;
+          case 'update-reg-status': this.openUpdateStatus(id);       break;
+          case 'withdraw-reg':      this.withdraw(id, tournamentId); break;
         }
       });
     });
   },
- 
+
   openUpdateStatus(id) {
-    document.getElementById('reg-status-id').value = id;
+    document.getElementById('reg-status-id').value        = id;
+    document.getElementById('reg-new-status').value       = '0'; // Pending por defecto
+    document.getElementById('reg-status-payment').checked = false;
     Modal.open('modal-registration-status');
   },
- 
+
   async withdraw(id, tournamentId) {
     const ok = await Confirm.show('¿Retirar a este jugador del torneo?');
     if (!ok) return;
@@ -918,77 +931,118 @@ const Registrations = {
       Toast.error(e.message);
     }
   },
- 
+
   async populatePlayerSelect() {
     try {
       const res     = await api.get('/Players/Active');
       const players = res.data ?? [];
       const sel     = document.getElementById('reg-player');
-      sel.innerHTML = '<option value="">Seleccionar jugador...</option>' +
+      sel.innerHTML =
+        '<option value="">Seleccionar jugador...</option>' +
         players.map(p => `<option value="${p.id}">${p.name} ${p.lastName}</option>`).join('');
     } catch (e) {
       Toast.error('Error al cargar jugadores: ' + e.message);
     }
   },
- 
+
   initForms() {
-    /* FIX #3: carga automática al seleccionar torneo en el filtro */
-    document.getElementById('filter-registration-tournament').addEventListener('change', () => {
-      const tid = document.getElementById('filter-registration-tournament').value;
-      this.loadByTournament(tid);
-    });
- 
-    /* Mantener botón Cargar como respaldo */
-    document.getElementById('btn-load-registrations').addEventListener('click', () => {
-      const tid = document.getElementById('filter-registration-tournament').value;
-      this.loadByTournament(tid);
-    });
- 
-    document.getElementById('btn-new-registration').addEventListener('click', async () => {
-      await this.populateTournamentSelects();
-      await this.populatePlayerSelect();
-      document.getElementById('form-registration').reset();
-      Modal.open('modal-registration');
-    });
- 
+
+    // Carga automática al seleccionar torneo en el filtro
+    document.getElementById('filter-registration-tournament')
+      .addEventListener('change', () => {
+        const tid = document.getElementById('filter-registration-tournament').value;
+        this.loadByTournament(tid);
+      });
+
+    // Botón Cargar como respaldo
+    document.getElementById('btn-load-registrations')
+      .addEventListener('click', () => {
+        const tid = document.getElementById('filter-registration-tournament').value;
+        this.loadByTournament(tid);
+      });
+
+    // Abrir modal nueva inscripción
+    document.getElementById('btn-new-registration')
+      .addEventListener('click', async () => {
+        await this.populateTournamentSelects();
+        await this.populatePlayerSelect();
+        document.getElementById('form-registration').reset();
+
+        // Pre-seleccionar el torneo activo del filtro si hay uno
+        const tid = document.getElementById('filter-registration-tournament').value;
+        if (tid) document.getElementById('reg-tournament').value = tid;
+
+        Modal.open('modal-registration');
+      });
+
+    // Submit nueva inscripción
+    // NOTA: el backend solo permite inscribir en torneos con status Programmed (0)
+    // El status inicial siempre será Pending — se cambia después con "Actualizar"
     document.getElementById('form-registration').addEventListener('submit', async e => {
       e.preventDefault();
+
+      const tournamentId = parseInt(document.getElementById('reg-tournament').value);
+      const playerId     = parseInt(document.getElementById('reg-player').value);
+      const dorsalRaw    = document.getElementById('reg-dorsal').value;
+      const paymentFee   = document.getElementById('reg-payment').checked;
+
+      if (!tournamentId || !playerId) {
+        Toast.warning('Selecciona torneo y jugador.');
+        return;
+      }
+
       const body = {
-        tournamentId: parseInt(document.getElementById('reg-tournament').value),
-        playerId:     parseInt(document.getElementById('reg-player').value),
-        dorsalNumber: parseInt(document.getElementById('reg-dorsal').value) || null,
-        paymentFee:   document.getElementById('reg-payment').checked,
+        tournamentId,
+        playerId,
+        dorsalNumber: dorsalRaw ? parseInt(dorsalRaw) : null,
+        paymentFee,
       };
-      if (!body.tournamentId || !body.playerId) { Toast.warning('Selecciona torneo y jugador.'); return; }
+
       try {
         await api.post('/TournamentRegistration', body);
-        Toast.success('Jugador inscrito correctamente.');
+        Toast.success('Jugador inscrito correctamente. Estado inicial: Pendiente.');
         Modal.close('modal-registration');
+
+        // Recargar la tabla si hay un torneo seleccionado en el filtro
         const tid = document.getElementById('filter-registration-tournament').value;
         if (tid) this.loadByTournament(tid);
       } catch (e) {
-        Toast.error(e.message);
+        // Mostrar el mensaje del backend (ej: torneo no está en Programmed)
+        Toast.error('Error al inscribir: ' + e.message);
       }
     });
- 
+
+    // Submit actualizar estado de inscripción
+    // El select envía 0,1,2,3 que coinciden con el enum RegistrationStatus del backend
     document.getElementById('form-registration-status').addEventListener('submit', async e => {
       e.preventDefault();
+
       const id      = document.getElementById('reg-status-id').value;
-      const status  = document.getElementById('reg-new-status').value;
+      const status  = parseInt(document.getElementById('reg-new-status').value);
       const payment = document.getElementById('reg-status-payment').checked;
+
+      if (!id) { Toast.warning('ID de inscripción no encontrado.'); return; }
+
       try {
-        await api.patch(`/TournamentRegistration/${id}/Status`, { status, paymentFee: payment });
-        Toast.success('Inscripción actualizada.');
+        await api.patch(`/TournamentRegistration/${id}/Status`, {
+          status,
+          paymentFee: payment,
+        });
+        Toast.success('Inscripción actualizada correctamente.');
         Modal.close('modal-registration-status');
+
         const tid = document.getElementById('filter-registration-tournament').value;
         if (tid) this.loadByTournament(tid);
       } catch (e) {
-        Toast.error(e.message);
+        Toast.error('Error al actualizar: ' + e.message);
       }
     });
   },
 };
- 
+
+  
+
+
 /* ============================================================
    RONDAS  — FIX #3: carga automática
              FIX #4: número y fecha de inicio automáticos
@@ -1081,7 +1135,7 @@ const Rounds = {
   },
  
   openStatus(id) {
-    document.getElementById('round-status-id').value  = id;
+    parseInt(document.getElementById('round-status-id')).value  = id;
     document.getElementById('round-new-status').value = '';
     /* FIX #4: fecha de cierre se setea automáticamente con la hora actual */
     document.getElementById('round-end-date').value   = toDatetimeLocal(new Date().toISOString());
@@ -1175,7 +1229,7 @@ const Rounds = {
     document.getElementById('form-round-status').addEventListener('submit', async e => {
       e.preventDefault();
       const id     = document.getElementById('round-status-id').value;
-      const status = document.getElementById('round-new-status').value;
+      const status = parseInt(document.getElementById('round-new-status')).value;
       if (!status) { Toast.warning('Selecciona un estado.'); return; }
  
       /* FIX #4: usar la fecha del campo (ya auto-rellenada) o la actual como fallback */
@@ -1340,20 +1394,20 @@ const Tables = {
     /* FIX #3: carga automática al seleccionar ronda */
     document.getElementById('filter-table-round').addEventListener('change', () => {
       const rid    = document.getElementById('filter-table-round').value;
-      const status = document.getElementById('filter-table-status').value;
+      const status = parseInt(document.getElementById('filter-table-status')).value;
       this.loadByRound(rid, status);
     });
  
     document.getElementById('filter-table-status').addEventListener('change', () => {
       const rid    = document.getElementById('filter-table-round').value;
-      const status = document.getElementById('filter-table-status').value;
+      const status = parseInt(document.getElementById('filter-table-status')).value;
       if (rid) this.loadByRound(rid, status);
     });
  
     /* Mantener botón Cargar como respaldo */
     document.getElementById('btn-load-tables').addEventListener('click', () => {
       const rid    = document.getElementById('filter-table-round').value;
-      const status = document.getElementById('filter-table-status').value;
+      const status = parseInt(document.getElementById('filter-table-status')).value;
       this.loadByRound(rid, status);
     });
  
@@ -1386,7 +1440,7 @@ const Tables = {
     document.getElementById('form-table-status').addEventListener('submit', async e => {
       e.preventDefault();
       const id     = document.getElementById('table-status-id').value;
-      const status = document.getElementById('table-new-status').value;
+      const status = parseInt(document.getElementById('table-new-status')).value;
       if (!status) { Toast.warning('Selecciona un estado.'); return; }
       const body = {
         status,

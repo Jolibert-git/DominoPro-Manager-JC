@@ -98,6 +98,7 @@ namespace Domino.Application.Services
                 var registration = _mapper.Map<TournamentRegistration>(request);
 
                 await _work.Registrations.AddAsync(registration);
+                await _work.CompleteAsync();
                 await _work.CommitAsync();
 
                 return ApiResponse<TournamentRegistrationDTO>.CreatedResponse(_mapper.Map<TournamentRegistrationDTO>(registration));
