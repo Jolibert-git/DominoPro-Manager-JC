@@ -55,16 +55,16 @@ namespace Domino.Application.Services
             return ApiResponse<TournamentRegistrationDTO>.SuccessResponse(_mapper.Map<TournamentRegistrationDTO>(reg));
         }
 
-        public async Task<ApiResponse<TournamentRegistrationDTO>> RegisterAsync(CreateTournamentRegistrationDTO request)
+        public async Task<ApiResponse<TournamentRegistrationDTO>> RegisterAsync(CreateTournamentRegistrationDTO createTournamentRegistrationDTO)
         {
-            var tournament = await _work.Tournaments.GetByIdAsync(request.TournamentId);
+            var tournament = await _work.Tournaments.GetByIdAsync(createTournamentRegistrationDTO.TournamentId);
 
             if (tournament is null)
             {
                 return ApiResponse<TournamentRegistrationDTO>.ErrorResponse($"Tournament with ID  was not found", 404);
             }
 
-            var player = await _work.Players.GetByIdAsync(request.PlayerId);
+            var player = await _work.Players.GetByIdAsync(createTournamentRegistrationDTO.PlayerId);
 
             if (player is null)
             {
@@ -86,7 +86,7 @@ namespace Domino.Application.Services
                 return ApiResponse<TournamentRegistrationDTO>.ErrorResponse("Inactive players cannot be registered in a tournament", 409);
             }
 
-            if (await _work.Registrations.IsPlayerRegisteredAsync(request.PlayerId, request.TournamentId))
+            if (await _work.Registrations.IsPlayerRegisteredAsync(createTournamentRegistrationDTO.PlayerId, createTournamentRegistrationDTO.TournamentId))
             {
                 return ApiResponse<TournamentRegistrationDTO>.ErrorResponse("This player is already registered in the tournament", 409);
             }
@@ -95,7 +95,7 @@ namespace Domino.Application.Services
 
             try
             {
-                var registration = _mapper.Map<TournamentRegistration>(request);
+                var registration = _mapper.Map<TournamentRegistration>(createTournamentRegistrationDTO);
 
                 await _work.Registrations.AddAsync(registration);
                 await _work.CompleteAsync();

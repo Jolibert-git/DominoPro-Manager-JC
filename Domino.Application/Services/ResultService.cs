@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Azure.Core;
 using Domino.Application.Contract;
 using Domino.Application.DTOs.ResultDTOs;
 using Domino.Application.Responses;
@@ -32,6 +31,8 @@ namespace Domino.Application.Services
             return ApiResponse<List<ResultDTO>>.SuccessResponse(_mapper.Map<List<ResultDTO>>(results));
         }
 
+
+
         public async Task<ApiResponse<List<ResultDTO>>> GetByPlayerAsync(int Id )
         {
             if (!await _work.Players.ExistsAsync(Id))
@@ -42,6 +43,10 @@ namespace Domino.Application.Services
             var results = await _work.Results.GetByPlayerAsync(Id );
             return ApiResponse<List<ResultDTO>>.SuccessResponse(_mapper.Map<List<ResultDTO>>(results));
         }
+
+
+
+
 
         public async Task<ApiResponse<List<ResultDTO>>> GetByPlayerAndTournamentAsync(int playerId, int tournamentId )
         {
@@ -58,6 +63,8 @@ namespace Domino.Application.Services
             var results = await _work.Results.GetByPlayerAndTournamentAsync(playerId, tournamentId);
             return ApiResponse<List<ResultDTO>>.SuccessResponse(_mapper.Map<List<ResultDTO>>(results));
         }
+
+
 
         public async Task<ApiResponse<ResultDTO>> GetByIdAsync(int id )
         {

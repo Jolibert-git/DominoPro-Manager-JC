@@ -32,6 +32,9 @@ namespace Domino.Application.Services
             return ApiResponse<List<TableDTO>>.SuccessResponse(_mapper.Map<List<TableDTO>>(tables));
         }
 
+
+
+
         public async Task<ApiResponse<List<TableDTO>>> GetPendingByRoundAsync(int roundId)
         {
             if (!await _work.Rounds.ExistsAsync(roundId))
@@ -43,6 +46,8 @@ namespace Domino.Application.Services
 
             return ApiResponse<List<TableDTO>>.SuccessResponse(_mapper.Map<List<TableDTO>>(tables));
         }
+
+
 
         public async Task<ApiResponse<TableDTO>> GetByIdAsync(int id)
         {
@@ -56,6 +61,7 @@ namespace Domino.Application.Services
             return ApiResponse<TableDTO>.SuccessResponse(_mapper.Map<TableDTO>(table));
         }
 
+
         public async Task<ApiResponse<TableDetailDTO>> GetWithResultsAsync(int id)
         {
             var table = await _work.Tables.GetWithResultsAsync(id);
@@ -67,6 +73,10 @@ namespace Domino.Application.Services
 
             return ApiResponse<TableDetailDTO>.SuccessResponse(_mapper.Map<TableDetailDTO>(table));
         }
+
+
+
+
 
         public async Task<ApiResponse<TableDTO>> CreateAsync(CreateTableDTO createTableDTO)
         {

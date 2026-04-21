@@ -27,17 +27,22 @@ namespace Domino.Application.Services
             return ApiResponse<List<PlayerDTO>>.SuccessResponse(_mapper.Map<List<PlayerDTO>>(players));
         }
 
+
+
+
         public async Task<ApiResponse<List<PlayerDTO>>> GetActiveAsync()
         {
             var players = await _work.Players.GetActivePlayersAsync();
             return ApiResponse<List<PlayerDTO>>.SuccessResponse(_mapper.Map<List<PlayerDTO>>(players));
         }
 
+
+
         public async Task<ApiResponse<List<PlayerDTO>>> GetByEloRangeAsync(short min, short max )
         {
             if (min > max)
             {
-                return ApiResponse<List<PlayerDTO>>.ErrorResponse("Min Elo cannot be greater than Max Elo", 400);//throw new BadRequestException("Min Elo cannot be greater than Max Elo"); 
+                return ApiResponse<List<PlayerDTO>>.ErrorResponse("Min Elo cannot be greater than Max Elo", 400);
             }
         
 
@@ -45,6 +50,10 @@ namespace Domino.Application.Services
 
             return ApiResponse<List<PlayerDTO>>.SuccessResponse(_mapper.Map<List<PlayerDTO>>(players));
         }
+
+
+
+
 
         public async Task<ApiResponse<PlayerDTO>> GetByIdAsync(int id)
         {

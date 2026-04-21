@@ -31,6 +31,9 @@ namespace Domino.Application.Services
             return ApiResponse<List<ClassificationDTO>>.SuccessResponse(_mapper.Map<List<ClassificationDTO>>(list));
         }
 
+
+
+
         public async Task<ApiResponse<List<ClassificationDTO>>> GetFinalStandingsAsync(int Id)
         {
             if (!await _work.Tournaments.ExistsAsync(Id))
@@ -48,6 +51,11 @@ namespace Domino.Application.Services
             return ApiResponse<List<ClassificationDTO>>.SuccessResponse(_mapper.Map<List<ClassificationDTO>>(list));
         }
 
+
+
+
+
+
         public async Task<ApiResponse<List<ClassificationDTO>>> GetTopNAsync(int tournamentId, int n)
         {
             if (n <= 0)
@@ -64,6 +72,8 @@ namespace Domino.Application.Services
 
             return ApiResponse<List<ClassificationDTO>>.SuccessResponse(_mapper.Map<List<ClassificationDTO>>(list));
         }
+
+
 
         public async Task<ApiResponse<ClassificationDTO>> GetByPlayerAndTournamentAsync(int playerId, int tournamentId)
         {

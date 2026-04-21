@@ -32,6 +32,11 @@ namespace Domino.Application.Services
             return ApiResponse<List<RoundDTO>>.SuccessResponse(_mapper.Map<List<RoundDTO>>(rounds));
         }
 
+
+
+
+
+
         public async Task<ApiResponse<RoundDTO>> GetByIdAsync(int id)
         {
             var round = await _work.Rounds.GetByIdAsync(id);
@@ -43,6 +48,10 @@ namespace Domino.Application.Services
 
             return ApiResponse<RoundDTO>.SuccessResponse(_mapper.Map<RoundDTO>(round));
         }
+
+
+
+
 
         public async Task<ApiResponse<RoundDetailDTO>> GetWithTablesAsync(int id)
         {
@@ -56,6 +65,9 @@ namespace Domino.Application.Services
             return ApiResponse<RoundDetailDTO>.SuccessResponse(_mapper.Map<RoundDetailDTO>(round));
         }
 
+
+
+
         public async Task<ApiResponse<RoundDTO>> GetCurrentAsync(int tournamentId)
         {
             var round = await _work.Rounds.GetCurrentAsync(tournamentId);
@@ -67,6 +79,9 @@ namespace Domino.Application.Services
 
             return ApiResponse<RoundDTO>.SuccessResponse(_mapper.Map<RoundDTO>(round));
         }
+
+
+
 
         public async Task<ApiResponse<RoundDTO>> CreateAsync(CreateRoundDTO createRoundDto)
         {
@@ -101,6 +116,8 @@ namespace Domino.Application.Services
 
             return ApiResponse<RoundDTO>.CreatedResponse(_mapper.Map<RoundDTO>(round));
         }
+
+
 
         public async Task<ApiResponse<RoundDTO>> UpdateStatusAsync(int id, UpdateRoundStatusDTO roundStatusDto)
         {

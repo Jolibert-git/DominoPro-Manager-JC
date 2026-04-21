@@ -87,14 +87,12 @@ namespace Domino.Application.Services
                 return ApiResponse<TournamentDTO>.ErrorResponse($"Tournament with ID  was not found", 404);
             }
 
-            if (tournament.Status == TournamentStatus.Finalized ||
-                tournament.Status == TournamentStatus.Canceled)
+            if (tournament.Status == TournamentStatus.Finalized || tournament.Status == TournamentStatus.Canceled)
             {
                 return ApiResponse<TournamentDTO>.ErrorResponse("Cannot update a finalized or canceled tournament", 409);
             }
 
-            if (updateTournamentDTO.EndDate.HasValue &&
-                updateTournamentDTO.EndDate <= (updateTournamentDTO.StartDate ?? tournament.StartDate))
+            if (updateTournamentDTO.EndDate.HasValue && updateTournamentDTO.EndDate <= (updateTournamentDTO.StartDate ?? tournament.StartDate))
             {
                 return ApiResponse<TournamentDTO>.ErrorResponse("End date must be after start date", 400);
             }
